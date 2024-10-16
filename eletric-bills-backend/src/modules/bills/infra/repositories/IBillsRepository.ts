@@ -1,0 +1,7 @@
+
+
+interface IBillsRepository {
+
+}
+
+export { IBillsRepository };

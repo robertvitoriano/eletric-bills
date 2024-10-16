@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+
+  eletric_bills_db:
+    image: postgres
+    container_name: eletric_bills_db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=eletric_bills_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  app:
+    build: .
+    container_name: eletric_bills
+    ports:
+      - 3334:3334
+    volumes:
+      - .:/usr/app
+
+    links:
+      - eletric_bills_db
+    depends_on:
+      - eletric_bills_db
+
+volumes:
+  pgdata:
+    driver: local

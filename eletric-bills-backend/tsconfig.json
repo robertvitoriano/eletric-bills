@@ -1,0 +1,25 @@
+{
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      // "baseUrl": "./",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      "allowJs": true,
+      "outDir": "./dist",
+
+
+    }
+  },
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    // "baseUrl": "./",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  }
+}

@@ -1,0 +1,15 @@
+import { Outlet, useNavigate } from "react-router-dom";
+import { Header } from "./Header";
+
+
+export function AppLayout() {
+
+  return (
+    <div className="flex min-h-screen flex-col relative overflow-hidden">
+      <Header />
+      <div className="flex flex-col">
+        <Outlet />
+      </div>
+    </div>
+  );
+}

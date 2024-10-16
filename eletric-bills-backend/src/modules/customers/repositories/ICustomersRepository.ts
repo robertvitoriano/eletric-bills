@@ -1,0 +1,3 @@
+interface ICustomersRepository {}
+
+export { ICustomersRepository };
