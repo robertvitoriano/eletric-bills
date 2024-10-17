@@ -1,5 +1,5 @@
 {
-  "name": "node-api-solid-template",
+  "name": "eletric-bills-backend",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -53,6 +53,7 @@
     "typescript": "^4.9.5"
   },
   "scripts": {
+    "start": "ts-node  --transpile-only src/shared/infra/http/server.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/shared/infra/http/server.ts",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "test": "jest",
