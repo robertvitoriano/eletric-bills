@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IBillsRepository } from "../infra/repositories/IBillsRepository";
+import { IBillsRepository } from "../repositories/IBillsRepository";
 @injectable()
 export class CreateBillUseCase {
   constructor(

@@ -1,6 +1,6 @@
 import { Repository, SelectQueryBuilder } from "typeorm";
 
-import { IBillsRepository } from "./IBillsRepository";
+import { IBillsRepository } from "../../repositories/IBillsRepository";
 
 class BillsRepository implements IBillsRepository {}
 
