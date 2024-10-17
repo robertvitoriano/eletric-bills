@@ -6,7 +6,6 @@ import { Eye } from "lucide-react";
 import classNames from "classnames";
 import { mockYears, YearData } from "./invoice-mocks";
 import { Pagination } from "@/components/pagination";
-import { Card, CardContent } from "@/components/ui/card";
 
 export function Invoices() {
   const [years] = useState<Array<YearData>>(mockYears);
@@ -58,7 +57,11 @@ export function Invoices() {
             <TableRow>
               <TableHead className="w-[100px] text-center text-white">Nome</TableHead>
               <TableHead className="text-center text-white">Número de Instalação</TableHead>
-              <TableHead className="text-center text-white">Faturas por mês</TableHead>
+              {selectedYear?.rows[0].invoices.map(({ month }) => (
+                <TableHead key={month} className="text-center text-white">
+                  {month}
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -67,14 +70,13 @@ export function Invoices() {
                 <TableRow key={instalationNumber}>
                   <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
                   <TableCell className="text-center">{instalationNumber}</TableCell>
-                  <TableCell>
-                    <div className="flex justify-center gap-4">
-                      {invoices.map(({ month, active }) => (
-                        <div key={month} className={classNames("flex flex-col gap-2")}>
-                          <span className={classNames("text-white text-center font-bold")}>{month}</span>
+                  {invoices.map(({ month, active }) => (
+                    <TableCell key={month}>
+                      <div className="flex justify-center gap-2">
+                        <div className={classNames("flex flex-col gap-2")}>
                           <div
                             className={classNames(
-                              "flex justify-center gap-2 items-center bg-primary w-fit p-2 text-bold rounded-xl",
+                              "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
                               "flex-col relative",
                               {
                                 "hover:bg-white hover:text-primary cursor-pointer": active,
@@ -91,9 +93,9 @@ export function Invoices() {
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </TableCell>
+                      </div>
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
           </TableBody>
