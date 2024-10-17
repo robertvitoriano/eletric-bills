@@ -1,6 +1,5 @@
 {
   "ts-node": {
-    "compilerOptions": {
       "compilerOptions": {
         "lib": [
            "es5",
@@ -14,9 +13,6 @@
         "experimentalDecorators": true,
         "sourceMap": true
      }
-
-
-    }
   },
   "compilerOptions": {
     "module": "esnext",

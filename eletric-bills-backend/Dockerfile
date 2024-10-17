@@ -4,8 +4,6 @@ WORKDIR /usr/app
 
 COPY package.json ./
 
-RUN npm install ts-node-dev -g
-
 RUN npm install
 
 COPY . .
