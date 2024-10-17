@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
-import { ResponsiveContainer, LineChart, XAxis, CartesianGrid, Line, Tooltip, YAxis } from "recharts";
+import { ResponsiveContainer, LineChart, XAxis, CartesianGrid, Line, YAxis } from "recharts";
 import colors from "tailwindcss/colors";
 
 const data = [

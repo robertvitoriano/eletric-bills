@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
-import { ResponsiveContainer, PieChart, Pie, Cell, LabelListProps } from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import colors from "tailwindcss/colors";
 
 const data = [
@@ -25,7 +25,7 @@ export const InvoicesComposition = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={240}>
+        <ResponsiveContainer className={"w-fit"} height={240}>
           <PieChart style={{ fontSize: 12 }}>
             <Pie
               data={data}
