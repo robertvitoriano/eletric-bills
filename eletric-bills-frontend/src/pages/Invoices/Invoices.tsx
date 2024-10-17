@@ -1,5 +1,5 @@
-import { TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, Table } from "@/components/ui/table";
-import { useEffect, useState, useRef } from "react";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table } from "@/components/ui/table";
+import { useState } from "react";
 import pdfIcon from "./../../assets/pdf_icon.png";
 import pdfIconDisabled from "./../../assets/pdf_icon_disabled.png";
 import { Download } from "lucide-react";
@@ -7,7 +7,7 @@ import classNames from "classnames";
 import { mockYears, YearData } from "./invoice-mocks";
 
 export function Invoices() {
-  const [years, setYears] = useState<Array<YearData>>(mockYears);
+  const [years] = useState<Array<YearData>>(mockYears);
   const [selectedYear, setSelectedYear] = useState<YearData>();
 
   function handleSelectedYear(year: YearData) {
