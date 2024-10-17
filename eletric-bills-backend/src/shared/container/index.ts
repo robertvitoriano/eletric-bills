@@ -1,14 +1,14 @@
 import { container } from "tsyringe";
 import { ICustomersRepository } from "../../modules/customers/repositories/ICustomersRepository";
-import { IBillsRepository } from "../../modules/bills/repositories/IBillsRepository";
-import { BillsRepository } from "../../modules/bills/infra/repositories/BillsRepository";
 import { CustomersRepository } from "../../modules/customers/infra/repositories/CustomersRepository";
+import { IInvoicesRepository } from "../../modules/invoices/repositories/IInvoiceRepository";
+import { InvoicesRepository } from "../../modules/invoices/infra/repositories/InvoicesRepository";
 container.registerSingleton<ICustomersRepository>(
   "CustumersRepository",
   CustomersRepository
 );
 
-container.registerSingleton<IBillsRepository>(
-  "BillsRepository",
-  BillsRepository
+container.registerSingleton<IInvoicesRepository>(
+  "InvoicesRepository",
+  InvoicesRepository
 );

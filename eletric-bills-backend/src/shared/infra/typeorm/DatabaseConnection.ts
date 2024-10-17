@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 import { Customer } from "../../../modules/customers/infra/typeorm/entities/Customer";
-import { Bill } from "../../../modules/bills/infra/entities/Bill";
 import dotenv from "dotenv";
+import { Invoice } from "../../../modules/invoices/infra/entities/Invoice";
 dotenv.config();
 
 export const PostgresDataSource = new DataSource({
@@ -11,7 +11,7 @@ export const PostgresDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Customer, Bill],
+  entities: [Customer, Invoice],
 });
 
 export const initializeDatabase = async () => {

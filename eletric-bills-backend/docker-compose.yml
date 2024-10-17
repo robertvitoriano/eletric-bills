@@ -2,30 +2,30 @@ version: "3.7"
 
 services:
 
-  eletric_bills_db:
+  eletric_invoices_db:
     image: postgres
-    container_name: eletric_bills_db
+    container_name: eletric_invoices_db
     restart: always
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=eletric_bills_db
+      - POSTGRES_DB=eletric_invoices_db
     volumes:
       - pgdata:/var/lib/postgresql/data
   app:
     build: .
-    container_name: eletric_bills
+    container_name: eletric_invoices
     ports:
       - 3334:3334
     volumes:
       - .:/usr/app
 
     links:
-      - eletric_bills_db
+      - eletric_invoices_db
     depends_on:
-      - eletric_bills_db
+      - eletric_invoices_db
 
 volumes:
   pgdata:

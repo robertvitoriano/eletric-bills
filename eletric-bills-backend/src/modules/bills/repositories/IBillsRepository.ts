@@ -1,7 +1,0 @@
-
-
-interface IBillsRepository {
-
-}
-
-export { IBillsRepository };

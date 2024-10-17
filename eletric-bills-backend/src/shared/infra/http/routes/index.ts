@@ -1,10 +1,10 @@
 import { Router } from "express";
 
-import { billsRouter } from "./bills.routes";
+import { invoicesRouter } from "./invoices.routes";
 import { customersRouter } from "./customers.routes";
 const router = Router();
 
-router.use("/bills", billsRouter);
+router.use("/invoices", invoicesRouter);
 router.use("/customers", customersRouter);
 
 export { router };

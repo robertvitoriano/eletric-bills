@@ -1,6 +1,6 @@
-import { initializeDatabase } from "../typeorm/DatabaseConnection";
 import http from "http";
-import { app } from "./../../app";
+import { initializeDatabase } from "../typeorm/DatabaseConnection";
+import { app } from "../../app";
 
 const startServer = async () => {
   await initializeDatabase();

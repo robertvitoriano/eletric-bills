@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { CreateBillController } from "../../../../modules/bills/useCases/CreateBillController";
+import { CreateInvoiceController } from "../../../../modules/invoices/useCases/CreateInvoiceController";
 
 const customersRouter = Router();
-const createBillController = new CreateBillController();
-customersRouter.get("/", createBillController.handle);
+const createInvoiceController = new CreateInvoiceController();
+customersRouter.get("/", createInvoiceController.handle);
 
 export { customersRouter };

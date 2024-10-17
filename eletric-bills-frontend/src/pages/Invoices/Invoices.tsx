@@ -4,9 +4,9 @@ import pdfIcon from "./../../assets/pdf_icon.png";
 import pdfIconDisabled from "./../../assets/pdf_icon_disabled.png";
 import { Download } from "lucide-react";
 import classNames from "classnames";
-import { mockYears, YearData } from "./bill-mocks";
+import { mockYears, YearData } from "./invoice-mocks";
 
-export function Bills() {
+export function Invoices() {
   const [years, setYears] = useState<Array<YearData>>(mockYears);
   const [selectedYear, setSelectedYear] = useState<YearData>();
 
@@ -42,13 +42,13 @@ export function Bills() {
           </TableHeader>
           <TableBody>
             {selectedYear &&
-              selectedYear.rows.map(({ instalationNumber, name, bills }) => (
+              selectedYear.rows.map(({ instalationNumber, name, invoices }) => (
                 <TableRow key={instalationNumber}>
                   <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
                   <TableCell className="text-center">{instalationNumber}</TableCell>
                   <TableCell>
                     <div className="flex justify-center flex-wrap gap-4">
-                      {bills.map(({ month, active }) => (
+                      {invoices.map(({ month, active }) => (
                         <div key={month} className="flex flex-col gap-4">
                           <span className="text-primary font-bold">{month}</span>
                           <div

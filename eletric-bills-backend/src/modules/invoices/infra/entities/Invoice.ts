@@ -6,37 +6,35 @@ import {
   UpdateDateColumn,
   JoinColumn,
   ManyToOne,
-  OneToMany,
 } from "typeorm";
+import { Customer } from "../../../customers/infra/typeorm/entities/Customer";
 
-@Entity({ name: "bills" })
-export class Bill {
+@Entity({ name: "invoices" })
+export class Invoice {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: "char", length: 36 })
+  @Column("varchar", { length: 200 })
   customer_id: string;
 
-  @Column({ type: "char", length: 36 })
+  @Column("varchar", { length: 200 })
   parent_comment_id: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "char", length: 255 })
   content: string;
 
   @CreateDateColumn({ type: "timestamp" })
   due_date: Date;
-  
+
   @CreateDateColumn({ type: "timestamp" })
   created_at: Date;
 
   @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
 
-
-  @ManyToOne("customers", "bills", { onDelete: "CASCADE" })
+  @ManyToOne(() => Customer, (customer) => customer.invoices, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "customer_id" })
-  customer!: any;
-
-  @OneToMany("bills", "parentComment")
-  replies!: Comment[];
+  customer!: Customer;
 }

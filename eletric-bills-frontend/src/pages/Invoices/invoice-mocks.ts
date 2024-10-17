@@ -1,4 +1,4 @@
-export type Bill = {
+export type Invoice = {
   month: string;
   active: boolean;
 };
@@ -6,7 +6,7 @@ export type Bill = {
 export type Row = {
   name: string;
   instalationNumber: string;
-  bills: Bill[];
+  invoices: Invoice[];
 };
 
 export type YearData = {
@@ -21,7 +21,7 @@ export const mockYears = [
       {
         name: "Josevaldo",
         instalationNumber: "456456a1561651",
-        bills: [
+        invoices: [
           { month: "Janeiro", active: true },
           { month: "Fevereiro", active: true },
           { month: "Março", active: true },
@@ -39,7 +39,7 @@ export const mockYears = [
       {
         name: "Ana Clara",
         instalationNumber: "9864571456141",
-        bills: [
+        invoices: [
           { month: "Janeiro", active: false },
           { month: "Fevereiro", active: false },
           { month: "Março", active: false },
@@ -57,7 +57,7 @@ export const mockYears = [
       {
         name: "Roberto",
         instalationNumber: "5123156123451",
-        bills: [
+        invoices: [
           { month: "Janeiro", active: false },
           { month: "Fevereiro", active: true },
           { month: "Março", active: true },
@@ -75,7 +75,7 @@ export const mockYears = [
       {
         name: "Mariana",
         instalationNumber: "7152156123487",
-        bills: [
+        invoices: [
           { month: "Janeiro", active: true },
           { month: "Fevereiro", active: true },
           { month: "Março", active: false },
@@ -93,7 +93,7 @@ export const mockYears = [
       {
         name: "Carlos",
         instalationNumber: "4156123165487",
-        bills: [
+        invoices: [
           { month: "Janeiro", active: false },
           { month: "Fevereiro", active: true },
           { month: "Março", active: true },
@@ -111,7 +111,7 @@ export const mockYears = [
       {
         name: "Fernanda",
         instalationNumber: "6515613616161",
-        bills: [
+        invoices: [
           { month: "Janeiro", active: true },
           { month: "Fevereiro", active: false },
           { month: "Março", active: false },
