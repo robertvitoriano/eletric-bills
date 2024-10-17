@@ -66,15 +66,11 @@ export function Invoices() {
                 <TableRow key={instalationNumber}>
                   <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
                   <TableCell className="text-center">{instalationNumber}</TableCell>
-                  <TableCell className={classNames({ "p-0 pb-4": rowIndex !== 0 })}>
+                  <TableCell>
                     <div className="flex justify-center flex-wrap gap-4">
                       {invoices.map(({ month, active }) => (
-                        <div key={month} className={classNames("flex flex-col gap-4", { "gap-0": rowIndex !== 0 })}>
-                          <span
-                            className={classNames("text-white text-center font-bold", { "opacity-0": rowIndex !== 0 })}
-                          >
-                            {month}
-                          </span>
+                        <div key={month} className={classNames("flex flex-col gap-4")}>
+                          <span className={classNames("text-white text-center font-bold")}>{month}</span>
                           <div
                             className={classNames(
                               "flex justify-center gap-2 items-center bg-primary w-fit p-2 text-bold rounded-xl",

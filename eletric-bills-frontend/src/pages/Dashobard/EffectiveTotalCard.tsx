@@ -10,10 +10,6 @@ export const EffectiveTotalCard = () => {
       </CardHeader>
       <CardContent className="space-y-10 border-none">
         <span className="text-2xl font-bold tracking-tight text-white">400 kWh</span>
-        <p className="text-xs text-muted-foreground text-white">
-          <span className="text-emerald-500 dark:text-emerald-400">+2% </span>
-          em relação ao mês passado
-        </p>
       </CardContent>
     </Card>
   );

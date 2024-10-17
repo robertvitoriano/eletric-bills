@@ -10,6 +10,7 @@ import { useState, useRef } from "react";
 
 export function Dashboard() {
   const [fileSelected, setFileSelected] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const openFileDialog = () => {
@@ -20,6 +21,26 @@ export function Dashboard() {
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
+      setFileSelected(true);
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
       setFileSelected(true);
     }
   };
@@ -40,11 +61,18 @@ export function Dashboard() {
             }
             content={
               <div className="flex flex-col items-center">
-                <div className="flex flex-col items-center justify-center p-4 w-[400px] h-[350px]">
-                  <div className="relative flex items-center justify-center cursor-pointer" onClick={openFileDialog}>
+                <div
+                  className={`flex flex-col items-center justify-center p-4 w-[400px] h-[350px] transition-opacity duration-300`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={openFileDialog}
+                >
+                  <div className="relative flex items-center justify-center cursor-pointer">
                     <div className="absolute w-80 h-80 bg-transparent border-2 border-gray-500 rounded-xl" />
                     <div className="absolute w-32 h-32 bg-gray-500 opacity-20 rounded-full" />
-                    <FileUp className="w-16 h-16 text-emerald-500 z-10" />
+                    {!isDragging && <FileUp className="w-16 h-16 text-emerald-500 z-10" />}
+                    {isDragging && <span className="font-bold text-2xl text-white">Solte a fatura!</span>}
                   </div>
 
                   <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
