@@ -6,6 +6,7 @@ import { Eye } from "lucide-react";
 import classNames from "classnames";
 import { mockYears, YearData } from "./invoice-mocks";
 import { Pagination } from "@/components/pagination";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function Invoices() {
   const [years] = useState<Array<YearData>>(mockYears);
@@ -52,7 +53,7 @@ export function Invoices() {
         ))}
       </div>
       <div className="w-full overflow-x-auto">
-        <Table className="min-w-[800px]">
+        <Table className="min-w-[1200px]">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px] text-center text-white">Nome</TableHead>
@@ -62,14 +63,14 @@ export function Invoices() {
           </TableHeader>
           <TableBody>
             {selectedYear &&
-              selectedYear.rows.map(({ instalationNumber, name, invoices }, rowIndex) => (
+              selectedYear.rows.map(({ instalationNumber, name, invoices }) => (
                 <TableRow key={instalationNumber}>
                   <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
                   <TableCell className="text-center">{instalationNumber}</TableCell>
                   <TableCell>
-                    <div className="flex justify-center flex-wrap gap-4">
+                    <div className="flex justify-center gap-4">
                       {invoices.map(({ month, active }) => (
-                        <div key={month} className={classNames("flex flex-col gap-4")}>
+                        <div key={month} className={classNames("flex flex-col gap-2")}>
                           <span className={classNames("text-white text-center font-bold")}>{month}</span>
                           <div
                             className={classNames(
@@ -97,7 +98,7 @@ export function Invoices() {
               ))}
           </TableBody>
         </Table>
-        <div className="p-4 rounded-lg bg-transparent">
+        <div className="p-4 rounded-lg bg-transparent text-white">
           <Pagination pageIndex={0} perPage={10} totalCount={100} />
         </div>
       </div>
