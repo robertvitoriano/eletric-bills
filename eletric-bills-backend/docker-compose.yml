@@ -1,7 +1,6 @@
 version: "3.7"
 
 services:
-
   eletric_invoices_db:
     image: postgres
     container_name: eletric_invoices_db
@@ -14,6 +13,12 @@ services:
       - POSTGRES_DB=eletric_invoices_db
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
     container_name: eletric_invoices
@@ -21,11 +26,9 @@ services:
       - 3334:3334
     volumes:
       - .:/usr/app
-
-    links:
-      - eletric_invoices_db
     depends_on:
-      - eletric_invoices_db
+      eletric_invoices_db:
+        condition: service_healthy
 
 volumes:
   pgdata:
