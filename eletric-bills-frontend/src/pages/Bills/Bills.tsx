@@ -18,7 +18,12 @@ export function Bills() {
       <div className="flex gap-4">
         {years.map((year) => (
           <div
-            className="bg-primary p-2 md:p-4 text-bold rounded-xl cursor-pointer hover:bg-white hover:text-primary"
+            className={classNames(
+              "bg-primary p-2 md:p-4 text-bold rounded-xl cursor-pointer hover:bg-white hover:text-primary",
+              {
+                "bg-white text-primary": selectedYear?.year === year?.year,
+              }
+            )}
             onClick={() => handleSelectedYear(year)}
           >
             {year.year}

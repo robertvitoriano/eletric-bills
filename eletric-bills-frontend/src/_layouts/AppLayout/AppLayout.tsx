@@ -3,7 +3,7 @@ import { Header } from "./Header";
 
 export function AppLayout() {
   return (
-    <div className="flex min-h-screen flex-col relative overflow-hidden bg-secondary">
+    <div className="flex min-h-screen flex-col gap-4 relative overflow-hidden bg-secondary">
       <Header />
       <div className="flex flex-col">
         <Outlet />
