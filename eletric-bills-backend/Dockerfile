@@ -3,10 +3,11 @@ FROM node
 WORKDIR /usr/app
 
 COPY package.json ./
+COPY tsconfig.json ./
 
 RUN npm install
 
-COPY . .
+COPY ./src .
 
 EXPOSE 5555
 
