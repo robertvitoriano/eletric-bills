@@ -26,6 +26,8 @@ services:
       - 5555:5555
     volumes:
       - .:/usr/app
+      - /usr/src/app/node_modules
+
     depends_on:
       eletric_invoices_db:
         condition: service_healthy
