@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "deploy": "npm run build && aws s3 sync dist/ s3://eletric-invoices-web --acl public-read"
-
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
@@ -22,7 +21,7 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-radio-group": "^1.1.3",
     "@radix-ui/react-slider": "^1.1.2",
-    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-slot": "^1.1.0",
     "@tanstack/react-query": "^5.32.1",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
@@ -37,6 +36,7 @@
     "react-hook-form": "^7.51.3",
     "react-map-gl": "^7.1.7",
     "react-router-dom": "^6.22.3",
+    "recharts": "^2.13.0",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",

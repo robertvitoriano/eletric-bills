@@ -1,21 +1,41 @@
 import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table } from "@/components/ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import pdfIcon from "./../../assets/pdf_icon.png";
 import pdfIconDisabled from "./../../assets/pdf_icon_disabled.png";
-import { Download } from "lucide-react";
+import { Eye } from "lucide-react";
 import classNames from "classnames";
 import { mockYears, YearData } from "./invoice-mocks";
+import { Pagination } from "@/components/pagination";
 
 export function Invoices() {
   const [years] = useState<Array<YearData>>(mockYears);
   const [selectedYear, setSelectedYear] = useState<YearData>();
 
+  function updateUrlQueryParam(year: string) {
+    const params = new URLSearchParams(window.location.search);
+    params.set("year", year);
+    window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
+  }
+
   function handleSelectedYear(year: YearData) {
     setSelectedYear(year);
+    updateUrlQueryParam(year.year.toString());
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const yearFromQuery = params.get("year");
+    if (yearFromQuery) {
+      const year = years.find((y) => y.year.toString() === yearFromQuery);
+      if (year) setSelectedYear(year);
+    } else {
+      setSelectedYear(years[0]);
+    }
+  }, [years]);
+
   return (
     <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white">
-      <div className="flex gap-4">
+      <div className="flex gap-4 p-4">
         {years.map((year) => (
           <div
             key={year.year}
@@ -32,25 +52,29 @@ export function Invoices() {
         ))}
       </div>
       <div className="w-full overflow-x-auto">
-        <Table className="min-w-[1000px]">
+        <Table className="min-w-[800px]">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px] text-center">Nome</TableHead>
-              <TableHead className="text-center">Número de Instalação</TableHead>
-              <TableHead className="text-center">Faturas por mês</TableHead>
+              <TableHead className="w-[100px] text-center text-white">Nome</TableHead>
+              <TableHead className="text-center text-white">Número de Instalação</TableHead>
+              <TableHead className="text-center text-white">Faturas por mês</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {selectedYear &&
-              selectedYear.rows.map(({ instalationNumber, name, invoices }) => (
+              selectedYear.rows.map(({ instalationNumber, name, invoices }, rowIndex) => (
                 <TableRow key={instalationNumber}>
                   <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
                   <TableCell className="text-center">{instalationNumber}</TableCell>
-                  <TableCell>
+                  <TableCell className={classNames({ "p-0 pb-4": rowIndex !== 0 })}>
                     <div className="flex justify-center flex-wrap gap-4">
                       {invoices.map(({ month, active }) => (
-                        <div key={month} className="flex flex-col gap-4">
-                          <span className="text-primary font-bold">{month}</span>
+                        <div key={month} className={classNames("flex flex-col gap-4", { "gap-0": rowIndex !== 0 })}>
+                          <span
+                            className={classNames("text-white text-center font-bold", { "opacity-0": rowIndex !== 0 })}
+                          >
+                            {month}
+                          </span>
                           <div
                             className={classNames(
                               "flex justify-center gap-2 items-center bg-primary w-fit p-2 text-bold rounded-xl",
@@ -66,7 +90,7 @@ export function Invoices() {
                                 "hover:opacity-100": active,
                               })}
                             >
-                              <Download />
+                              <Eye />
                             </div>
                           </div>
                         </div>
@@ -77,6 +101,9 @@ export function Invoices() {
               ))}
           </TableBody>
         </Table>
+        <div className="p-4 rounded-lg bg-transparent">
+          <Pagination pageIndex={0} perPage={10} totalCount={100} />
+        </div>
       </div>
     </div>
   );
