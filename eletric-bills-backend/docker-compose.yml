@@ -23,7 +23,7 @@ services:
     build: .
     container_name: eletric_invoices
     ports:
-      - 3334:3334
+      - 5555:5555
     volumes:
       - .:/usr/app
     depends_on:

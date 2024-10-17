@@ -58,7 +58,7 @@
     "test": "jest",
     "seed:admin": "ts-node src/shared/infra/typeorm/seed/admin.ts",
     "seed:notification-types": "ts-node src/shared/infra/typeorm/seed/notification-types.ts",
-    "migration:run": "npx ts-node ./node_modules/typeorm/cli.js migration:run",
+    "migration:run": "npm run typeorm migration:run -- -d path-to-datasource-config",
     "migration:generate": "npx ts-node ./node_modules/typeorm/cli.js migration:generate -n",
     "migration:revert": "npx ts-node ./node_modules/typeorm/cli.js migration:revert"
   }
