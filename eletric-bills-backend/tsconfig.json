@@ -1,15 +1,19 @@
 {
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs",
-      // "baseUrl": "./",
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "resolveJsonModule": true,
-      "allowJs": true,
-      "outDir": "./dist",
+      "compilerOptions": {
+        "lib": [
+           "es5",
+           "es6"
+        ],
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "outDir": "./build",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true
+     }
 
 
     }
