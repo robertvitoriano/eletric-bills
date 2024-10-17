@@ -25,8 +25,8 @@ export const InvoicesComposition = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer className={"w-fit"} height={240}>
-          <PieChart style={{ fontSize: 12 }}>
+        <ResponsiveContainer height={240}>
+          <PieChart style={{ fontSize: 12, width: "fit-content" }}>
             <Pie
               data={data}
               dataKey={"amount"}
