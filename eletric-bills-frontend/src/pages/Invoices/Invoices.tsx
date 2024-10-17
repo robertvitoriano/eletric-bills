@@ -35,7 +35,7 @@ export function Invoices() {
   }, [years]);
 
   return (
-    <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white">
+    <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white p-4">
       <div className="flex gap-4 p-4">
         {years.map((year) => (
           <div
@@ -52,7 +52,7 @@ export function Invoices() {
           </div>
         ))}
       </div>
-      <div className="w-full overflow-x-auto">
+      <div className="w-full">
         <Table className="min-w-[1200px]">
           <TableHeader>
             <TableRow>
