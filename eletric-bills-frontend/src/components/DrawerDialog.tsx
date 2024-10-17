@@ -21,16 +21,18 @@ import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 interface DrawerDialogProps {
   trigger?: ReactNode | string;
-  dialogTitle?: string;
+  title?: string;
   dialogDescription?: string;
+  drawerDescription?: string;
   content?: ReactNode;
   footerContent?: ReactNode;
 }
 
 export function DrawerDialog({
   trigger = "Drawer Trigger ",
-  dialogTitle = "Drawer Dialog title",
+  title = "Drawer Dialog title",
   dialogDescription = "This is the dialog description",
+  drawerDescription = "This is the drawer description",
   content,
   footerContent,
 }: DrawerDialogProps) {
@@ -43,7 +45,7 @@ export function DrawerDialog({
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-secondary">
           <DialogHeader>
-            <DialogTitle className="text-white">{dialogTitle}</DialogTitle>
+            <DialogTitle className="text-white">{title}</DialogTitle>
             <DialogDescription className="text-white">{dialogDescription}</DialogDescription>
           </DialogHeader>
           {content}
@@ -57,8 +59,8 @@ export function DrawerDialog({
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent className="bg-secondary">
         <DrawerHeader>
-          <DrawerTitle className="text-white">{dialogTitle}</DrawerTitle>
-          <DrawerDescription className="text-white">{dialogDescription}</DrawerDescription>
+          <DrawerTitle className="text-white">{title}</DrawerTitle>
+          <DrawerDescription className="text-white">{drawerDescription}</DrawerDescription>
         </DrawerHeader>
         {content}
         {footerContent && <DrawerFooter className="pt-2 text-white">{footerContent}</DrawerFooter>}
