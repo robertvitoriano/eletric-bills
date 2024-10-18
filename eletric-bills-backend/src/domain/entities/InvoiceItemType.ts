@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToMany } from "typeorm";
 import { InvoiceItem } from "./InvoiceItem";
 
-@Entity("invoice_types")
+@Entity("invoice_item_types")
 export class InvoiceItemType {
   @PrimaryColumn()
   id: number;

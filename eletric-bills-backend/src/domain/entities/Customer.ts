@@ -13,13 +13,13 @@ export class Customer {
   @Column({ type: "varchar", length: 255 })
   address: string;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column({ type: "varchar", length: 20, unique: true })
   cpf_cnpj: string;
 
   @Column({ type: "varchar", length: 50 })
   state_registration: string;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column({ type: "varchar", length: 20, unique: true })
   customer_number: string;
 
   @Column({ type: "varchar", length: 20 })

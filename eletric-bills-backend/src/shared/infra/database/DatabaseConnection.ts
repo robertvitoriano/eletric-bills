@@ -6,8 +6,6 @@ dotenv.config();
 export const initializeDatabase = async () => {
   try {
     await PostgresDataSource.initialize();
-    console.info("Data Source has been initialized!");
-    console.log(__dirname + "/migrations/*.ts");
   } catch (err) {
     console.error("Error during Data Source initialization", err);
   }

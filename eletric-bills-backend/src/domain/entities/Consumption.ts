@@ -1,14 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { Customer } from "./Customer";
-//histórico
 @Entity("consumptions")
 export class Consumption {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({ type: "uuid" })
+  customer_id: string;
+
   @ManyToOne(() => Customer, (customer) => customer.consumptions, {
     onDelete: "CASCADE",
   })
+  @JoinColumn({ name: "customer_id" })
   customer: Customer;
 
   @Column({ type: "varchar", length: 20 })

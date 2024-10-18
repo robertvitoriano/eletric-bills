@@ -1,8 +1,12 @@
 import http from "http";
-import { initializeDatabase } from "../database/DatabaseConnection";
+import {
+  initializeDatabase,
+  runMigrations,
+} from "../database/DatabaseConnection";
 import { app } from "../../app";
 
 const startServer = async () => {
+  await runMigrations();
   await initializeDatabase();
 
   const httpServer = http.createServer(app);

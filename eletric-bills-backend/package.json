@@ -61,6 +61,7 @@
     "seed:admin": "ts-node src/shared/infra/typeorm/seed/admin.ts",
     "seed:notification-types": "ts-node src/shared/infra/typeorm/seed/notification-types.ts",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "migrations:run":"npm run typeorm migration:run -- --dataSource src/shared/infra/database/PostgresDataSource.ts",
     "migration:create": "npm run typeorm migration:generate -- --dataSource src/shared/infra/database/PostgresDataSource.ts",
     "migration:revert": "npm run typeorm migration:revert -- -d ./src/shared/database/PostgresDataSource.ts"
   
