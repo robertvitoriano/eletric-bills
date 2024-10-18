@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CreateInvoiceController } from "../../../../core/infra/controllers/CreateInvoiceController";
+import { CreateInvoiceController } from "../../../../domain/infra/controllers/CreateInvoiceController";
 
 const customersRouter = Router();
 const createInvoiceController = new CreateInvoiceController();

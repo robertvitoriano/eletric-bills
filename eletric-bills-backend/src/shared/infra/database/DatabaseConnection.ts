@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
-import { Consumption } from "../../../core/entities/Consumption";
-import { Customer } from "../../../core/entities/Customer";
-import { Invoice } from "../../../core/entities/Invoice";
-import { InvoiceItem } from "../../../core/entities/InvoiceItem";
+import { Consumption } from "../../../domain/entities/Consumption";
+import { Customer } from "../../../domain/entities/Customer";
+import { Invoice } from "../../../domain/entities/Invoice";
+import { InvoiceItem } from "../../../domain/entities/InvoiceItem";
 
 dotenv.config();
 
