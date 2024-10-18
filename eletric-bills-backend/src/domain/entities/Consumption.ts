@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { Customer } from "./Customer";
-
+//histórico
 @Entity("consumptions")
 export class Consumption {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @ManyToOne(() => Customer, (customer) => customer.consumptions, {
     onDelete: "CASCADE",

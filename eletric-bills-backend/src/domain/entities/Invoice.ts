@@ -4,18 +4,23 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from "typeorm";
 import { Customer } from "./Customer";
 import { InvoiceItem } from "./InvoiceItem";
 
 @Entity("invoices")
 export class Invoice {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: number;
+
+  @Column({ type: "uuid" })
+  customer_id: number;
 
   @ManyToOne(() => Customer, (customer) => customer.invoices, {
     onDelete: "CASCADE",
   })
+  @JoinColumn({ name: "customer_id" })
   customer: Customer;
 
   @Column({ type: "varchar", length: 20 })
@@ -26,15 +31,6 @@ export class Invoice {
 
   @Column({ type: "numeric", precision: 10, scale: 2 })
   total_amount: number;
-
-  @Column({ type: "varchar", length: 50 })
-  tariff_class: string;
-
-  @Column({ type: "varchar", length: 50 })
-  subclass: string;
-
-  @Column({ type: "varchar", length: 50 })
-  tariff_mode: string;
 
   @Column({ type: "int" })
   reading_days: number;
@@ -47,6 +43,9 @@ export class Invoice {
 
   @Column({ type: "date" })
   next_reading: Date;
+
+  @Column({ type: "string" })
+  url: string;
 
   @OneToMany(() => InvoiceItem, (invoiceItem) => invoiceItem.invoice)
   invoice_items: InvoiceItem[];

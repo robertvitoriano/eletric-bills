@@ -4,8 +4,8 @@ import { Consumption } from "./Consumption";
 
 @Entity("customers")
 export class Customer {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({ type: "varchar", length: 255 })
   name: string;
