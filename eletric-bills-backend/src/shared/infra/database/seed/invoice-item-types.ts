@@ -2,21 +2,31 @@ import { InvoiceItemType } from "../../../../domain/entities/InvoiceItemType";
 import { InvoiceItemTypes } from "../../../enums/invoice-item-types";
 import { PostgresDataSource } from "../PostgresDataSource";
 
-async function seed() {
-  await PostgresDataSource.initialize();
+export async function seedInvoiceItemTypes() {
+  try {
+    await PostgresDataSource.initialize();
 
-  await PostgresDataSource.manager.save(
-    Object.entries(InvoiceItemTypes).map(([_, { id, type }]) =>
-      PostgresDataSource.manager.create(InvoiceItemType, {
-        id,
-        type_name: type,
-      })
-    )
-  );
+    const existingItemTypes = await PostgresDataSource.manager.find(
+      InvoiceItemType
+    );
 
-  console.log("Invoice item types seeded successfully!");
+    if (existingItemTypes.length === 0) {
+      await PostgresDataSource.manager.save(
+        Object.entries(InvoiceItemTypes).map(([_, { id, type }]) =>
+          PostgresDataSource.manager.create(InvoiceItemType, {
+            id,
+            type_name: type,
+          })
+        )
+      );
 
-  await PostgresDataSource.destroy();
+      console.log("Invoice item types seeded successfully!");
+    } else {
+      console.log("Invoice item types already exist. Skipping seed.");
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    await PostgresDataSource.destroy();
+  }
 }
-
-seed().catch(console.error);
