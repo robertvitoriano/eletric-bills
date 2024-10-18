@@ -1,3 +1,5 @@
-interface ICustomersRepository {}
+import { Customer } from "../entities/Customer"; // Ensure correct path
 
-export { ICustomersRepository };
+export interface ICustomersRepository {
+  store(customerData: Customer): Promise<Customer>;
+}

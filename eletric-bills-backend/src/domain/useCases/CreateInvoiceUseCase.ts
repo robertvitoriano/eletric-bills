@@ -3,7 +3,7 @@ import pdf from "pdf-parse";
 import fs from "fs";
 import { deleteFile } from "../../utils/file";
 import { uploadFile } from "../../utils/upload-file";
-import { IInvoicesRepository } from "../infra/repositories/IInvoiceRepository";
+import { IInvoicesRepository } from "../repositories/IInvoicesRepository";
 @injectable()
 class CreateInvoicesUseCase {
   constructor(
@@ -51,7 +51,9 @@ class CreateInvoicesUseCase {
         sections,
         customerNameLastIndex
       );
-
+      const customerNumber = this.getCustomerNumber(sectionsTrimmed);
+      const customerInstalationNumber =
+        this.getCustomerInstalationNumber(sectionsTrimmed);
       console.log({
         energyConsumption,
         sceeWithoutICMSEnergy,
@@ -61,6 +63,8 @@ class CreateInvoicesUseCase {
         customerName,
         customerCpfOrCnpj,
         customerAddres,
+        customerNumber,
+        customerInstalationNumber,
       });
       await deleteFile(path);
       this.deleteFiles(filesForExtraction);
@@ -187,6 +191,18 @@ class CreateInvoicesUseCase {
     return address.replace(/\n/g, " ");
   }
 
+  getCustomerNumber(sections: Array<string>): number {
+    const customerNumberReferenteIndex = sections.findIndex((section) =>
+      section.includes("INSTALAÇÃO\n")
+    );
+    return Number(sections[customerNumberReferenteIndex + 1]);
+  }
+  getCustomerInstalationNumber(sections: Array<string>): number {
+    const customerNumberReferenteIndex = sections.findIndex((section) =>
+      section.includes("INSTALAÇÃO\n")
+    );
+    return Number(sections[customerNumberReferenteIndex + 2]);
+  }
   deleteFiles(filesArray: Array<{ name; data }>) {
     filesArray.forEach(({ name }) => {
       try {

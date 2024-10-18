@@ -1,11 +1,12 @@
 import { container } from "tsyringe";
-import { CustomersRepository } from "../../domain/infra/repositories/ICustomersRepository";
-import { IInvoicesRepository } from "../../domain/infra/repositories/IInvoiceRepository";
+import { CustomersRepository } from "../../domain/infra/repositories/CustomersRepository";
+import { InvoicesRepository } from "../../domain/infra/repositories/InvoicesRepository";
 import { ICustomersRepository } from "../../domain/repositories/ICustomersRepository";
-import { InvoicesRepository } from "../../domain/repositories/InvoicesRepository";
+import { IInvoicesRepository } from "../../domain/repositories/IInvoicesRepository";
 
 container.registerSingleton<ICustomersRepository>(
   "CustumersRepository",
+
   CustomersRepository
 );
 
