@@ -40,7 +40,7 @@ export function Dashboard() {
     setIsDragging(false);
 
     if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      const file = event.dataTransfer.files[0];
+      //const file = event.dataTransfer.files[0];
       setFileSelected(true);
     }
   };
