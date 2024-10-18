@@ -5,7 +5,7 @@ import { ICustomersRepository } from "../../domain/repositories/ICustomersReposi
 import { IInvoicesRepository } from "../../domain/repositories/IInvoicesRepository";
 
 container.registerSingleton<ICustomersRepository>(
-  "CustumersRepository",
+  "CustomersRepository",
 
   CustomersRepository
 );

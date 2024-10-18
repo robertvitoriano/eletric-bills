@@ -35,12 +35,6 @@ export class CreateCustomerTable1729272020586 implements MigrationInterface {
             isUnique: true,
           },
           {
-            name: "state_registration",
-            type: "varchar",
-            length: "50",
-            isNullable: false,
-          },
-          {
             name: "customer_number",
             type: "varchar",
             length: "20",

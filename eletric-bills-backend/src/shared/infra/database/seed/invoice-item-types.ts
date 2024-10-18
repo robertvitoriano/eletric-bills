@@ -20,9 +20,9 @@ export async function seedInvoiceItemTypes() {
         )
       );
 
-      console.log("Invoice item types seeded successfully!");
+      console.info("Invoice item types seeded successfully!");
     } else {
-      console.log("Invoice item types already exist. Skipping seed.");
+      console.info("Invoice item types already exist. Skipping seed.");
     }
   } catch (e) {
     console.error(e);

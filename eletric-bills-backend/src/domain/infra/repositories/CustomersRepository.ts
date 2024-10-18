@@ -8,9 +8,17 @@ class CustomersRepository implements CustomersRepository {
     this.customerRepository = PostgresDataSource.getRepository(Customer);
   }
 
-  async store(customerData: Customer): Promise<Customer> {
+  async store(
+    customerData: Omit<Customer, "id" | "consumptions" | "invoices">
+  ): Promise<Customer> {
     const customer = this.customerRepository.create(customerData);
     return await this.customerRepository.save(customer);
+  }
+  async find(data: Partial<Customer>): Promise<Customer | null> {
+    const customer = await this.customerRepository.findOne({
+      where: { ...data },
+    });
+    return customer;
   }
 }
 

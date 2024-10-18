@@ -4,11 +4,14 @@ import fs from "fs";
 import { deleteFile } from "../../utils/file";
 import { uploadFile } from "../../utils/upload-file";
 import { IInvoicesRepository } from "../repositories/IInvoicesRepository";
+import { ICustomersRepository } from "../repositories/ICustomersRepository";
 @injectable()
 class CreateInvoicesUseCase {
   constructor(
     @inject("InvoicesRepository")
-    private invoicesRepository: IInvoicesRepository
+    private invoicesRepository: IInvoicesRepository,
+    @inject("CustomersRepository")
+    private customersRepository: ICustomersRepository
   ) {}
 
   async execute(invoice: Express.Multer.File): Promise<void> {
@@ -66,11 +69,23 @@ class CreateInvoicesUseCase {
         customerNumber,
         customerInstalationNumber,
       });
+      const customer = await this.customersRepository.find({
+        cpf_cnpj: customerCpfOrCnpj,
+        installation_number: customerInstalationNumber,
+        customer_number: customerNumber,
+      });
+      if (!customer) {
+        await this.customersRepository.store({
+          address: customerAddres,
+          cpf_cnpj: customerCpfOrCnpj,
+          customer_number: customerNumber,
+          installation_number: customerInstalationNumber,
+          name: customerName,
+        });
+      }
       await deleteFile(path);
       this.deleteFiles(filesForExtraction);
     }
-
-    console.log(invoiceUrl);
   }
 
   getPublicIluminationCost(sections: Array<string>): number {
@@ -191,17 +206,17 @@ class CreateInvoicesUseCase {
     return address.replace(/\n/g, " ");
   }
 
-  getCustomerNumber(sections: Array<string>): number {
+  getCustomerNumber(sections: Array<string>): string {
     const customerNumberReferenteIndex = sections.findIndex((section) =>
       section.includes("INSTALAÇÃO\n")
     );
-    return Number(sections[customerNumberReferenteIndex + 1]);
+    return sections[customerNumberReferenteIndex + 1];
   }
-  getCustomerInstalationNumber(sections: Array<string>): number {
+  getCustomerInstalationNumber(sections: Array<string>): string {
     const customerNumberReferenteIndex = sections.findIndex((section) =>
       section.includes("INSTALAÇÃO\n")
     );
-    return Number(sections[customerNumberReferenteIndex + 2]);
+    return sections[customerNumberReferenteIndex + 2];
   }
   deleteFiles(filesArray: Array<{ name; data }>) {
     filesArray.forEach(({ name }) => {
