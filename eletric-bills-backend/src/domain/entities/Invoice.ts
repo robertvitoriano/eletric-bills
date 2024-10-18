@@ -44,7 +44,7 @@ export class Invoice {
   @Column({ type: "date" })
   next_reading: Date;
 
-  @Column({ type: "string" })
+  @Column({ type: "varchar", length: 20 })
   url: string;
 
   @OneToMany(() => InvoiceItem, (invoiceItem) => invoiceItem.invoice)

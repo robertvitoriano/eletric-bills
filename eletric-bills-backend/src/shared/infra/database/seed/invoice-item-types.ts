@@ -1,6 +1,6 @@
 import { InvoiceItemType } from "../../../../domain/entities/InvoiceItemType";
 import { InvoiceItemTypes } from "../../../enums/invoice-item-types";
-import { PostgresDataSource } from "../DatabaseConnection";
+import { PostgresDataSource } from "../PostgresDataSource";
 
 async function seed() {
   await PostgresDataSource.initialize();

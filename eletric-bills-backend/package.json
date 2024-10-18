@@ -57,12 +57,12 @@
     "build": "tsc",
     "start": "node dist/shared/infra/http/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/shared/infra/http/server.ts",
-    "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "test": "jest",
     "seed:admin": "ts-node src/shared/infra/typeorm/seed/admin.ts",
     "seed:notification-types": "ts-node src/shared/infra/typeorm/seed/notification-types.ts",
-    "migration:run": "npm run typeorm migration:run -- -d path-to-datasource-config",
-    "migration:generate": "npx ts-node ./node_modules/typeorm/cli.js migration:generate -n",
-    "migration:revert": "npx ts-node ./node_modules/typeorm/cli.js migration:revert"
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "migration:create": "npm run typeorm migration:generate -- --dataSource src/shared/infra/database/PostgresDataSource.ts",
+    "migration:revert": "npm run typeorm migration:revert -- -d ./src/shared/database/PostgresDataSource.ts"
+  
   }
 }

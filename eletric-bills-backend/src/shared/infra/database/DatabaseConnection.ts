@@ -1,27 +1,26 @@
 import dotenv from "dotenv";
-import { DataSource } from "typeorm";
-import { Consumption } from "../../../domain/entities/Consumption";
-import { Customer } from "../../../domain/entities/Customer";
-import { Invoice } from "../../../domain/entities/Invoice";
-import { InvoiceItem } from "../../../domain/entities/InvoiceItem";
+import { PostgresDataSource } from "./PostgresDataSource";
 
 dotenv.config();
-
-export const PostgresDataSource = new DataSource({
-  type: "postgres",
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  entities: [Customer, Invoice, InvoiceItem, Consumption],
-});
 
 export const initializeDatabase = async () => {
   try {
     await PostgresDataSource.initialize();
     console.info("Data Source has been initialized!");
+    console.log(__dirname + "/migrations/*.ts");
   } catch (err) {
     console.error("Error during Data Source initialization", err);
+  }
+};
+
+export const runMigrations = async () => {
+  try {
+    await PostgresDataSource.initialize();
+    await PostgresDataSource.runMigrations();
+    console.info("Migrations have been run successfully!");
+  } catch (err) {
+    console.error("Error during running migrations", err);
+  } finally {
+    await PostgresDataSource.destroy();
   }
 };
