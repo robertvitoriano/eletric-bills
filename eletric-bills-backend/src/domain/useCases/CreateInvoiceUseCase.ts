@@ -20,21 +20,41 @@ class CreateInvoicesUseCase {
       const dataBuffer = fs.readFileSync(path);
 
       const { text } = await pdf(dataBuffer);
-      const sections = text.split(" ").filter((section) => section.trim());
-      fs.writeFileSync("./sections.json", JSON.stringify(sections).toString());
-      const energyConsumption = this.getEnergyConsumption(sections);
-      const sceeWithoutICMSEnergy = this.getSCEEWithoutICMSEnergy(sections);
-      const compensatedGDEnergy = this.getCompensatedEnergyGD(sections);
-      const publicIluminationCost = this.getPublicIluminationCost(sections);
-      const totalCost = this.getTotalCost(sections);
+      const sections = text.split(" ");
+      const sectionsTrimmed = text
+        .split(" ")
+        .filter((section) => section.trim());
+      const textObj = { text: text };
+      const filesForExtraction = [
+        { name: "./invoice-text.json", data: textObj },
+        { name: "./inovice-sections.json", data: sections },
+        {
+          name: "./inovice-sections-trimmed.json",
+          data: sectionsTrimmed,
+        },
+      ];
+      filesForExtraction.forEach(({ name, data }) => {
+        fs.writeFileSync(name, JSON.stringify(data).toString());
+      });
+
+      const energyConsumption = this.getEnergyConsumption(sectionsTrimmed);
+      const sceeWithoutICMSEnergy =
+        this.getSCEEWithoutICMSEnergy(sectionsTrimmed);
+      const compensatedGDEnergy = this.getCompensatedEnergyGD(sectionsTrimmed);
+      const publicIluminationCost =
+        this.getPublicIluminationCost(sectionsTrimmed);
+      const totalCost = this.getTotalCost(sectionsTrimmed);
+      const customerName = this.getCustomerName(sections);
       console.log({
         energyConsumption,
         sceeWithoutICMSEnergy,
         compensatedGDEnergy,
         publicIluminationCost,
         totalCost,
+        customerName,
       });
       await deleteFile(path);
+      this.deleteFiles(filesForExtraction);
     }
 
     console.log(invoiceUrl);
@@ -109,6 +129,34 @@ class CreateInvoicesUseCase {
           .replace(",", ".")
       );
     }
+  }
+
+  getCustomerName(sections: Array<string>): string {
+    let customerName = "";
+    const customerNameReferenteIndex = sections.findIndex((section) =>
+      section.includes("AUTOMÁTICO\n")
+    );
+    customerName = sections[customerNameReferenteIndex].split("\n")[1];
+    for (let i = customerNameReferenteIndex + 1; i < sections.length; i++) {
+      if (sections[i].includes("\n")) {
+        customerName += " " + sections[i].split("\n")[0];
+        break;
+      }
+      customerName += " " + sections[i];
+    }
+
+    return customerName;
+  }
+  getCustomerCpfOrCnpj() {}
+
+  deleteFiles(filesArray: Array<{ name; data }>) {
+    filesArray.forEach(({ name }) => {
+      try {
+        fs.unlinkSync(name);
+      } catch (error) {
+        console.error(error);
+      }
+    });
   }
 }
 
