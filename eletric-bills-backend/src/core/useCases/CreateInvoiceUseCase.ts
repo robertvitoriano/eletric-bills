@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
-import { uploadFile } from "../../../utils/upload-file";
-import { IInvoicesRepository } from "../repositories/IInvoiceRepository";
+import { uploadFile } from "../../utils/upload-file";
 import pdf from "pdf-parse";
 import fs from "fs";
-import { deleteFile } from "../../../utils/file";
-import { AppError } from "../../../shared/errors/AppError";
+import { deleteFile } from "../../utils/file";
+import { AppError } from "../../shared/errors/AppError";
+import { IInvoicesRepository } from "../infra/repositories/IInvoiceRepository";
 @injectable()
 class CreateInvoicesUseCase {
   constructor(

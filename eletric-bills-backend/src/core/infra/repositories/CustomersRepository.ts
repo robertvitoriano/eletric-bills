@@ -1,5 +1,5 @@
+import { Customer } from "../../entities/Customer";
 import { ICustomersRepository } from "../../repositories/ICustomersRepository";
-import { Customer } from "../typeorm/entities/Customer";
 import { Repository, getRepository } from "typeorm";
 
 class CustomersRepository implements ICustomersRepository {

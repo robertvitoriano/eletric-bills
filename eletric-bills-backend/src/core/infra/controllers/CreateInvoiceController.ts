@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CreateInvoicesUseCase } from "./CreateInvoiceUseCase";
+import { CreateInvoicesUseCase } from "../../useCases/CreateInvoiceUseCase";
 import { container } from "tsyringe";
 import { HttpStatusCode } from "axios";
 

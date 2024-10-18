@@ -1,8 +1,9 @@
 import { container } from "tsyringe";
-import { ICustomersRepository } from "../../modules/customers/repositories/ICustomersRepository";
-import { CustomersRepository } from "../../modules/customers/infra/repositories/CustomersRepository";
-import { IInvoicesRepository } from "../../modules/invoices/repositories/IInvoiceRepository";
-import { InvoicesRepository } from "../../modules/invoices/infra/repositories/InvoicesRepository";
+import { CustomersRepository } from "../../core/infra/repositories/CustomersRepository";
+import { IInvoicesRepository } from "../../core/infra/repositories/IInvoiceRepository";
+import { ICustomersRepository } from "../../core/repositories/ICustomersRepository";
+import { InvoicesRepository } from "../../core/repositories/InvoicesRepository";
+
 container.registerSingleton<ICustomersRepository>(
   "CustumersRepository",
   CustomersRepository
