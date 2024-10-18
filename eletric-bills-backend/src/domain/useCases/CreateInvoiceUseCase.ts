@@ -44,7 +44,14 @@ class CreateInvoicesUseCase {
       const publicIluminationCost =
         this.getPublicIluminationCost(sectionsTrimmed);
       const totalCost = this.getTotalCost(sectionsTrimmed);
-      const customerName = this.getCustomerName(sections);
+      const { customerName, customerNameLastIndex } =
+        this.getCustomerName(sections);
+      const customerCpfOrCnpj = this.getCustomerCpfOrCnpj(sections);
+      const customerAddres = this.getCustomerAddress(
+        sections,
+        customerNameLastIndex
+      );
+
       console.log({
         energyConsumption,
         sceeWithoutICMSEnergy,
@@ -52,6 +59,8 @@ class CreateInvoicesUseCase {
         publicIluminationCost,
         totalCost,
         customerName,
+        customerCpfOrCnpj,
+        customerAddres,
       });
       await deleteFile(path);
       this.deleteFiles(filesForExtraction);
@@ -59,6 +68,7 @@ class CreateInvoicesUseCase {
 
     console.log(invoiceUrl);
   }
+
   getPublicIluminationCost(sections: Array<string>): number {
     const publicIluminationReferenceChunkIndex = sections.findIndex(
       (section, index) =>
@@ -131,23 +141,51 @@ class CreateInvoicesUseCase {
     }
   }
 
-  getCustomerName(sections: Array<string>): string {
+  getCustomerName(sections: Array<string>): {
+    customerName: string;
+    customerNameLastIndex: number;
+  } {
     let customerName = "";
     const customerNameReferenteIndex = sections.findIndex((section) =>
       section.includes("AUTOMÁTICO\n")
     );
     customerName = sections[customerNameReferenteIndex].split("\n")[1];
+    let customerNameLastIndex: number;
     for (let i = customerNameReferenteIndex + 1; i < sections.length; i++) {
       if (sections[i].includes("\n")) {
         customerName += " " + sections[i].split("\n")[0];
+        customerNameLastIndex = i;
         break;
       }
       customerName += " " + sections[i];
     }
 
-    return customerName;
+    return { customerName, customerNameLastIndex };
   }
-  getCustomerCpfOrCnpj() {}
+  getCustomerCpfOrCnpj(sections: Array<string>): string {
+    const cpfCnpjReference = sections.findIndex(
+      (section) => section.includes("\nCNPJ") || section.includes("\nCPF")
+    );
+    return sections[cpfCnpjReference + 1].replace("\n", "");
+  }
+  getCustomerAddress(
+    sections: Array<string>,
+    customerNameLastIndex: number
+  ): string {
+    let address: string = "";
+
+    address = sections[customerNameLastIndex].split("\n")[1];
+
+    for (let i = customerNameLastIndex + 1; i < sections.length; i++) {
+      if (sections[i].includes("\nCNPJ")) {
+        address += " " + sections[i].split("\n")[0];
+        break;
+      }
+      address += " " + sections[i];
+    }
+
+    return address.replace(/\n/g, " ");
+  }
 
   deleteFiles(filesArray: Array<{ name; data }>) {
     filesArray.forEach(({ name }) => {
