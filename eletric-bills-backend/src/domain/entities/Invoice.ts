@@ -44,8 +44,11 @@ export class Invoice {
   @Column({ type: "date" })
   next_reading: Date;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column({ type: "varchar", length: 255 })
   url: string;
+
+  @Column({ type: "varchar", length: 60 })
+  bar_code_number: string;
 
   @OneToMany(() => InvoiceItem, (invoiceItem) => invoiceItem.invoice)
   invoice_items: InvoiceItem[];

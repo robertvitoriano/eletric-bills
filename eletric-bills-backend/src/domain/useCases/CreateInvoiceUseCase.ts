@@ -5,6 +5,7 @@ import { deleteFile } from "../../utils/file";
 import { uploadFile } from "../../utils/upload-file";
 import { IInvoicesRepository } from "../repositories/IInvoicesRepository";
 import { ICustomersRepository } from "../repositories/ICustomersRepository";
+import { Customer } from "../entities/Customer";
 @injectable()
 class CreateInvoicesUseCase {
   constructor(
@@ -47,6 +48,15 @@ class CreateInvoicesUseCase {
       const publicIluminationCost =
         this.getPublicIluminationCost(sectionsTrimmed);
       const totalCost = this.getTotalCost(sectionsTrimmed);
+      const invoiceDueDate = this.getInvoiceDueDate(sectionsTrimmed);
+      console.log({
+        publicIluminationCost,
+        compensatedGDEnergy,
+        sceeWithoutICMSEnergy,
+        energyConsumption,
+        totalCost,
+        invoiceDueDate,
+      });
       const { customerName, customerNameLastIndex } =
         this.getCustomerName(sections);
       const customerCpfOrCnpj = this.getCustomerCpfOrCnpj(sections);
@@ -57,25 +67,15 @@ class CreateInvoicesUseCase {
       const customerNumber = this.getCustomerNumber(sectionsTrimmed);
       const customerInstalationNumber =
         this.getCustomerInstalationNumber(sectionsTrimmed);
-      console.log({
-        energyConsumption,
-        sceeWithoutICMSEnergy,
-        compensatedGDEnergy,
-        publicIluminationCost,
-        totalCost,
-        customerName,
-        customerCpfOrCnpj,
-        customerAddres,
-        customerNumber,
-        customerInstalationNumber,
-      });
+
       const customer = await this.customersRepository.find({
         cpf_cnpj: customerCpfOrCnpj,
         installation_number: customerInstalationNumber,
         customer_number: customerNumber,
       });
+      let storedCustomer: Customer;
       if (!customer) {
-        await this.customersRepository.store({
+        storedCustomer = await this.customersRepository.store({
           address: customerAddres,
           cpf_cnpj: customerCpfOrCnpj,
           customer_number: customerNumber,
@@ -83,8 +83,9 @@ class CreateInvoicesUseCase {
           name: customerName,
         });
       }
+
       await deleteFile(path);
-      this.deleteFiles(filesForExtraction);
+      //this.deleteFiles(filesForExtraction);
     }
   }
 
@@ -158,6 +159,20 @@ class CreateInvoicesUseCase {
           .replace(",", ".")
       );
     }
+  }
+
+  getInvoiceDueDate(sections: Array<string>): string {
+    const dueDateReferenceChunkIndex = sections.findIndex(
+      (section) =>
+        section.includes("R$") &&
+        !isNaN(Number(section.split("R$")[1].charAt(0)))
+    );
+    const [dueDateChunk] = sections[dueDateReferenceChunkIndex].split("R$");
+
+    return dueDateChunk.substring(
+      dueDateChunk.length - 10,
+      dueDateChunk.length - 1
+    );
   }
 
   getCustomerName(sections: Array<string>): {
