@@ -7,7 +7,7 @@ class CreateInvoiceController {
   async handle(request: Request, response: Response): Promise<Response> {
     try {
       const { files } = request;
-      const createInvoiceUseCase = container.resolve(CreateInvoicesUseCase);
+      const createInvoiceUseCase = new CreateInvoicesUseCase();
       const { invoice } = files as {
         invoice?: Express.Multer.File[];
       };
