@@ -1,13 +1,13 @@
-FROM node
+FROM node:18
 
 WORKDIR /usr/app
 
-COPY package.json ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN npm install
+RUN npm install -g pnpm && pnpm install
 
 COPY . .
 
-EXPOSE 3334
+EXPOSE 5555
 
-CMD ["sh", "-c", "npm run dev"]
+CMD ["pnpm", "run", "dev"]
