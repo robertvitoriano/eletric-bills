@@ -199,9 +199,9 @@ class CreateInvoicesUseCase {
       ].replace(".", "")
     );
     const cost = Number(
-      sections[
-        sections.findIndex((section) => section === "ICMSkWh") + 3
-      ].replace(",", ".")
+      sections[sections.findIndex((section) => section === "ICMSkWh") + 3]
+        .replace(",", ".")
+        .replace(".", "")
     );
 
     return { quantity, cost };
@@ -216,7 +216,9 @@ class CreateInvoicesUseCase {
     const quantity = Number(
       sections[gdReferenceChunkIndex + 1].replace(".", "")
     );
-    const cost = Number(sections[gdReferenceChunkIndex + 3].replace(",", "."));
+    const cost = Number(
+      sections[gdReferenceChunkIndex + 3].replace(",", ".").replace(".", "")
+    );
 
     return { quantity, cost };
   }
