@@ -49,6 +49,10 @@ class CreateInvoicesUseCase {
         this.getPublicIluminationCost(sectionsTrimmed);
       const totalCost = this.getTotalCost(sectionsTrimmed);
       const invoiceDueDate = this.getInvoiceDueDate(sectionsTrimmed);
+      const barCodeNumber = this.getInvoiceBarCodeNumber(
+        sectionsTrimmed,
+        invoiceDueDate
+      );
       console.log({
         publicIluminationCost,
         compensatedGDEnergy,
@@ -56,6 +60,7 @@ class CreateInvoicesUseCase {
         energyConsumption,
         totalCost,
         invoiceDueDate,
+        barCodeNumber,
       });
       const { customerName, customerNameLastIndex } =
         this.getCustomerName(sections);
@@ -171,7 +176,7 @@ class CreateInvoicesUseCase {
 
     return dueDateChunk.substring(
       dueDateChunk.length - 10,
-      dueDateChunk.length - 1
+      dueDateChunk.length
     );
   }
 
@@ -232,6 +237,32 @@ class CreateInvoicesUseCase {
       section.includes("INSTALAÇÃO\n")
     );
     return sections[customerNumberReferenteIndex + 2];
+  }
+
+  getInvoiceBarCodeNumber(sections: Array<string>, dueDate: string): string {
+    const barCodeNumberReferenceChunkIndex = sections.findIndex((section) =>
+      section.includes(`${dueDate}R$`)
+    );
+    let barCodeNumber: string = "";
+    if (barCodeNumberReferenceChunkIndex > 1) {
+      const barCodeInitialChunk = sections[barCodeNumberReferenceChunkIndex];
+      barCodeNumber = barCodeInitialChunk.substring(
+        barCodeInitialChunk.length - 13,
+        barCodeInitialChunk.length
+      );
+    }
+    for (
+      let i = barCodeNumberReferenceChunkIndex + 1;
+      i < sections.length;
+      i++
+    ) {
+      if (sections[i].includes("\n")) {
+        barCodeNumber += " " + sections[i].split("\n")[0];
+        break;
+      }
+      barCodeNumber += " " + sections[i];
+    }
+    return barCodeNumber;
   }
   deleteFiles(filesArray: Array<{ name; data }>) {
     filesArray.forEach(({ name }) => {
