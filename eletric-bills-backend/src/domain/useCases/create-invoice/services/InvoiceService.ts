@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IInvoicesRepository } from "../../../repositories/IInvoicesRepository";
 import { parse } from "date-fns";
 import { InvoiceItemTypes } from "../../../../shared/enums/invoice-item-types";
+import { IStoreInvoiceDTO } from "../../../dtos/IStoreInvoiceDTO";
 
 @injectable()
 export class InvoiceService {
@@ -10,7 +11,7 @@ export class InvoiceService {
     private invoicesRepository: IInvoicesRepository
   ) {}
 
-  async storeNewInvoice(data: any) {
+  async storeNewInvoice(data: IStoreInvoiceDTO) {
     let currentInvoice = await this.invoicesRepository.find({
       bar_code_number: data.barCode,
     });
@@ -101,7 +102,7 @@ export class InvoiceService {
     readingDate: string,
     currentYear: number
   ): { nextYear: number; previousYear: number } {
-    const [day, month] = readingDate.split("/").map(Number);
+    const [_, month] = readingDate.split("/").map(Number);
 
     let nextYear = currentYear;
     let previousYear = currentYear;

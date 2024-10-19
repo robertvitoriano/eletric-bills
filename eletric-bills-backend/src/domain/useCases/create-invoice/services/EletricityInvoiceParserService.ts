@@ -1,5 +1,6 @@
 import fs from "fs";
 import pdf from "pdf-parse";
+import { CustomerInfo, InvoiceParameters } from "./types";
 
 export class EletricityInvoiceParser {
   private sections: Array<string>;
@@ -7,8 +8,8 @@ export class EletricityInvoiceParser {
   private barCodeLastElement: string;
 
   async extractData(path: string): Promise<{
-    invoiceParameters: any;
-    customerInfo: any;
+    invoiceParameters: InvoiceParameters;
+    customerInfo: CustomerInfo;
   }> {
     const dataBuffer = fs.readFileSync(path);
 

@@ -1,5 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { ICustomersRepository } from "../../../repositories/ICustomersRepository";
+import { IStoreCustomerDTO } from "../../../dtos/IStoreCostumerDTO";
 
 @injectable()
 export class CustomerService {
@@ -7,7 +8,9 @@ export class CustomerService {
     @inject("CustomersRepository")
     private customersRepository: ICustomersRepository
   ) {}
-  async storeNewCustomer(data: any): Promise<{ customerId: string }> {
+  async storeNewCustomer(
+    data: IStoreCustomerDTO
+  ): Promise<{ customerId: string }> {
     let customer = await this.customersRepository.find({
       cpf_cnpj: data.customerCpfOrCnpj,
       installation_number: data.customerInstalationNumber,
