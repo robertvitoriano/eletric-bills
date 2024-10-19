@@ -55,6 +55,8 @@ class CreateInvoicesUseCase {
       );
       const invoiceReferenceDate =
         this.getInvoiceReferenceDate(sectionsTrimmed);
+      const { previousReading, currentReading, nextReading, readingDays } =
+        this.getInvoiceReadingDates(sectionsTrimmed);
       console.log({
         publicIluminationCost,
         compensatedGDEnergy,
@@ -64,6 +66,10 @@ class CreateInvoicesUseCase {
         invoiceDueDate,
         barCodeNumber,
         invoiceReferenceDate,
+        previousReading,
+        currentReading,
+        nextReading,
+        readingDays,
       });
       const { customerName, customerNameLastIndex } =
         this.getCustomerName(sections);
@@ -94,7 +100,7 @@ class CreateInvoicesUseCase {
       }
 
       await deleteFile(path);
-      //this.deleteFiles(filesForExtraction);
+      this.deleteFiles(filesForExtraction);
     }
   }
 
@@ -270,9 +276,38 @@ class CreateInvoicesUseCase {
         section.includes("(R$)\n") &&
         sections[index - 1].includes("pagar") &&
         sections[index - 2].includes("a") &&
-        sections[index - 3].includes("a")
+        sections[index - 3].includes("Valor")
     );
     return sections[referenceDateNearChunkIndex + 1];
+  }
+  getInvoiceReadingDates(sections: Array<string>): {
+    previousReading: string;
+    currentReading: string;
+    nextReading: string;
+    readingDays: string;
+  } {
+    const referenceDateNearChunkIndex = sections.findIndex(
+      (section, index) =>
+        section.includes("atividades") &&
+        sections[index - 1].includes("outras") &&
+        sections[index - 2].includes("e") &&
+        sections[index - 3].includes("Trifásico")
+    );
+    const readingsChunk = sections[referenceDateNearChunkIndex].replace(
+      "atividades",
+      ""
+    );
+    const readingsMidIndex = Math.floor(readingsChunk.length / 2);
+    const previousReading = readingsChunk.slice(0, readingsMidIndex);
+    const currentReading = readingsChunk.slice(readingsMidIndex);
+
+    const nextReadingChunk = sections[referenceDateNearChunkIndex + 1];
+    const readingDays = nextReadingChunk.substring(0, 2);
+    const nextReading = nextReadingChunk
+      .replace("\nInformações", "")
+      .replace(String(readingDays), "");
+
+    return { previousReading, currentReading, readingDays, nextReading };
   }
   deleteFiles(filesArray: Array<{ name; data }>) {
     filesArray.forEach(({ name }) => {
