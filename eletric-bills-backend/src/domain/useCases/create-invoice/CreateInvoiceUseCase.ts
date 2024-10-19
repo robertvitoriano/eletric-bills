@@ -1,11 +1,12 @@
 import { inject, injectable } from "tsyringe";
 import pdf from "pdf-parse";
 import fs from "fs";
-import { deleteFile } from "../../utils/file";
-import { uploadFile } from "../../utils/upload-file";
-import { IInvoicesRepository } from "../repositories/IInvoicesRepository";
-import { ICustomersRepository } from "../repositories/ICustomersRepository";
+import { deleteFile } from "../../../utils/file";
+import { uploadFile } from "../../../utils/upload-file";
+import { IInvoicesRepository } from "../../repositories/IInvoicesRepository";
+import { ICustomersRepository } from "../../repositories/ICustomersRepository";
 import { parse } from "date-fns";
+import path from "path";
 @injectable()
 class CreateInvoicesUseCase {
   constructor(
@@ -16,11 +17,11 @@ class CreateInvoicesUseCase {
   ) {}
 
   async execute(invoice: Express.Multer.File): Promise<void> {
-    let invoiceUrl = "";
     if (invoice) {
       const { url, path } = await uploadFile({
         file: invoice,
       });
+
       const dataBuffer = fs.readFileSync(path);
 
       const { text } = await pdf(dataBuffer);
@@ -40,16 +41,19 @@ class CreateInvoicesUseCase {
       filesForExtraction.forEach(({ name, data }) => {
         fs.writeFileSync(name, JSON.stringify(data).toString());
       });
-
-      const energyConsumption = this.getEnergyConsumption(sectionsTrimmed);
-      const sceeWithoutICMSEnergy =
-        this.getSCEEWithoutICMSEnergy(sectionsTrimmed);
+      const damageCompensations = this.getDamageCompensations(sectionsTrimmed);
+      const paymentRefund = this.getPaymentRefund(sectionsTrimmed);
+      const yellowFlagCost = this.getYellowFlagCost(sectionsTrimmed);
+      const totalCost = this.getTotalCost(sectionsTrimmed);
       const compensatedGDEnergy = this.getCompensatedEnergyGD(sectionsTrimmed);
       const publicIluminationCost =
         this.getPublicIluminationCost(sectionsTrimmed);
-      const totalCost = this.getTotalCost(sectionsTrimmed);
+      const sceeWithoutICMSEnergy =
+        this.getSCEEWithoutICMSEnergy(sectionsTrimmed);
+      const energyConsumption = this.getEnergyConsumption(sectionsTrimmed);
+
       const invoiceDueDate = this.getInvoiceDueDate(sectionsTrimmed);
-      const barCodeNumber = this.getInvoiceBarCodeNumber(
+      const { barCode, barCodeLastElement } = this.getInvoiceBarCodeNumber(
         sectionsTrimmed,
         invoiceDueDate
       );
@@ -59,20 +63,25 @@ class CreateInvoicesUseCase {
         this.getInvoiceReadingDates(sectionsTrimmed);
       console.log({
         publicIluminationCost,
+        damageCompensations,
         compensatedGDEnergy,
         sceeWithoutICMSEnergy,
         energyConsumption,
         totalCost,
         invoiceDueDate,
-        barCodeNumber,
+        barCode,
         invoiceReferenceDate,
         previousReading,
         currentReading,
         nextReading,
         readingDays,
+        paymentRefund,
+        yellowFlagCost,
       });
-      const { customerName, customerNameLastIndex } =
-        this.getCustomerName(sections);
+      const { customerName, customerNameLastIndex } = this.getCustomerName(
+        sections,
+        barCodeLastElement
+      );
       const customerCpfOrCnpj = this.getCustomerCpfOrCnpj(sections);
       const customerAddres = this.getCustomerAddress(
         sections,
@@ -99,7 +108,7 @@ class CreateInvoicesUseCase {
       }
 
       let currentInvoice = await this.invoicesRepository.find({
-        bar_code_number: barCodeNumber,
+        bar_code_number: barCode,
       });
       const currentInvoiceYear = new Date(invoiceDueDate).getFullYear();
       const { nextYear, previousYear } = this.getAdjustedYear(
@@ -108,7 +117,7 @@ class CreateInvoicesUseCase {
       );
       if (!currentInvoice) {
         currentInvoice = await this.invoicesRepository.store({
-          bar_code_number: barCodeNumber,
+          bar_code_number: barCode,
           current_reading: parse(
             `${currentReading}/${currentInvoiceYear}`,
             "dd/MM/yyyy",
@@ -132,11 +141,11 @@ class CreateInvoicesUseCase {
           customer_id: customer.id,
         });
       }
-      console.log({ currentInvoice });
       await deleteFile(path);
-      this.deleteFiles(filesForExtraction);
+      //  this.deleteFiles(filesForExtraction);
     }
   }
+
   private getAdjustedYear(
     readingDate: string,
     currentYear: number
@@ -156,13 +165,12 @@ class CreateInvoicesUseCase {
   }
   getPublicIluminationCost(sections: Array<string>): number {
     const publicIluminationReferenceChunkIndex = sections.findIndex(
-      (section, index) =>
-        section === "Municipal" && sections[index - 1] === "Publica"
+      (section) => section === "Municipal"
     );
-
+    console.log;
     return Number(
       sections[publicIluminationReferenceChunkIndex + 1]
-        .replace("\nTOTAL", "")
+        .split("\n")[0]
         .replace(",", ".")
     );
   }
@@ -212,14 +220,56 @@ class CreateInvoicesUseCase {
 
     return { quantity, cost };
   }
-  getTotalCost(sections: Array<string>): number {
-    const publicIluminationReferenceChunkIndex = sections.findIndex(
-      (section, index) =>
-        section.includes("\nTOTAL") && sections[index - 1] === "Municipal"
+  getDamageCompensations(sections: Array<string>): number {
+    const damageCompensationsChunkIndex = sections.findIndex((section, index) =>
+      section.includes("Danos")
     );
-    if (publicIluminationReferenceChunkIndex > 1) {
+
+    const cost = Number(
+      sections[damageCompensationsChunkIndex + 1]
+        .replace(",", ".")
+        .replace("\nTOTAL", "")
+    );
+
+    return cost;
+  }
+  getPaymentRefund(sections: Array<string>): number {
+    const damageCompensationsChunkIndex = sections.findIndex(
+      (section, index) =>
+        section.includes("Restituição") &&
+        sections[index + 1].includes("de") &&
+        sections[index + 2].includes("Pagamento")
+    );
+
+    const cost = Number(
+      sections[damageCompensationsChunkIndex + 3]
+        .replace(",", ".")
+        .replace("\nTOTAL", "")
+    );
+
+    return cost;
+  }
+  getYellowFlagCost(sections: Array<string>): number {
+    const yellowFlagCostChunkIndex = sections.findIndex((section, index) =>
+      section.includes("Bandeira")
+    );
+    for (let i = yellowFlagCostChunkIndex + 1; i < sections.length; i++) {
+      if (!isNaN(Number(sections[i].charAt(0)))) {
+        const cost = Number(
+          sections[i].replace(",", ".").replace("\nHistórico", "")
+        );
+        return cost;
+      }
+    }
+  }
+  getTotalCost(sections: Array<string>): number {
+    const totalCostReferenceChunkIndex = sections.findIndex((section) =>
+      section.includes("\nTOTAL")
+    );
+
+    if (totalCostReferenceChunkIndex > 1) {
       return Number(
-        sections[publicIluminationReferenceChunkIndex + 1]
+        sections[totalCostReferenceChunkIndex + 1]
           .replace("\nHistórico", "")
           .replace(",", ".")
       );
@@ -240,16 +290,30 @@ class CreateInvoicesUseCase {
     );
   }
 
-  getCustomerName(sections: Array<string>): {
+  getCustomerName(
+    sections: Array<string>,
+    barCodeLastElement: string
+  ): {
     customerName: string;
     customerNameLastIndex: number;
   } {
     let customerName = "";
-    const customerNameReferenteIndex = sections.findIndex((section) =>
+    let customerNameReferenteIndex = 0;
+    const automaticReferenceIndex = sections.findIndex((section) =>
       section.includes("AUTOMÁTICO\n")
     );
+
+    if (automaticReferenceIndex > 1) {
+      customerNameReferenteIndex = automaticReferenceIndex;
+    } else {
+      customerNameReferenteIndex = sections.findIndex((section) =>
+        section.includes(`${barCodeLastElement}\n`)
+      );
+    }
     customerName = sections[customerNameReferenteIndex].split("\n")[1];
+
     let customerNameLastIndex: number;
+
     for (let i = customerNameReferenteIndex + 1; i < sections.length; i++) {
       if (sections[i].includes("\n")) {
         customerName += " " + sections[i].split("\n")[0];
@@ -258,14 +322,15 @@ class CreateInvoicesUseCase {
       }
       customerName += " " + sections[i];
     }
-
     return { customerName, customerNameLastIndex };
   }
   getCustomerCpfOrCnpj(sections: Array<string>): string {
     const cpfCnpjReference = sections.findIndex(
       (section) => section.includes("\nCNPJ") || section.includes("\nCPF")
     );
-    return sections[cpfCnpjReference + 1].replace("\n", "");
+    return sections[cpfCnpjReference + 1]
+      .replace("\n", "")
+      .replace("INSCRIÇÃO", "");
   }
   getCustomerAddress(
     sections: Array<string>,
@@ -299,11 +364,15 @@ class CreateInvoicesUseCase {
     return sections[customerNumberReferenteIndex + 2];
   }
 
-  getInvoiceBarCodeNumber(sections: Array<string>, dueDate: string): string {
+  getInvoiceBarCodeNumber(
+    sections: Array<string>,
+    dueDate: string
+  ): { barCode: string; barCodeLastElement: string } {
     const barCodeReferenceChunkIndex = sections.findIndex((section) =>
       section.includes(`${dueDate}R$`)
     );
     let barCode: string = "";
+    let barCodeLastElement = "";
     if (barCodeReferenceChunkIndex > 1) {
       const barCodeInitialChunk = sections[barCodeReferenceChunkIndex];
       barCode = barCodeInitialChunk.substring(
@@ -314,11 +383,12 @@ class CreateInvoicesUseCase {
     for (let i = barCodeReferenceChunkIndex + 1; i < sections.length; i++) {
       if (sections[i].includes("\n")) {
         barCode += " " + sections[i].split("\n")[0];
+        barCodeLastElement = sections[i].split("\n")[0];
         break;
       }
       barCode += " " + sections[i];
     }
-    return barCode;
+    return { barCode, barCodeLastElement };
   }
   getInvoiceReferenceDate(sections: Array<string>) {
     const referenceDateNearChunkIndex = sections.findIndex(
@@ -336,28 +406,57 @@ class CreateInvoicesUseCase {
     nextReading: string;
     readingDays: number;
   } {
-    const referenceDateNearChunkIndex = sections.findIndex(
+    const threePhaseReferenceDateNearChunkIndex = sections.findIndex(
       (section, index) =>
         section.includes("atividades") &&
         sections[index - 1].includes("outras") &&
         sections[index - 2].includes("e") &&
         sections[index - 3].includes("Trifásico")
     );
-    const readingsChunk = sections[referenceDateNearChunkIndex].replace(
-      "atividades",
-      ""
+    const biPhasicReferenceDateNearChunkIndex = sections.findIndex((section) =>
+      section.includes("Bifásico")
     );
-    const readingsMidIndex = Math.floor(readingsChunk.length / 2);
-    const previousReading = readingsChunk.slice(0, readingsMidIndex);
-    const currentReading = readingsChunk.slice(readingsMidIndex);
 
-    const nextReadingChunk = sections[referenceDateNearChunkIndex + 1];
-    const readingDays = Number(nextReadingChunk.substring(0, 2));
-    const nextReading = nextReadingChunk
-      .replace("\nInformações", "")
-      .replace(String(readingDays), "");
+    if (threePhaseReferenceDateNearChunkIndex > 1) {
+      const readingsChunk = sections[
+        threePhaseReferenceDateNearChunkIndex
+      ].replace("atividades", "");
 
-    return { previousReading, currentReading, readingDays, nextReading };
+      const readingsMidIndex = Math.floor(readingsChunk.length / 2);
+      const previousReading = readingsChunk.slice(0, readingsMidIndex);
+      const currentReading = readingsChunk.slice(readingsMidIndex);
+
+      const nextReadingChunk =
+        sections[threePhaseReferenceDateNearChunkIndex + 1];
+
+      const readingDays = Number(nextReadingChunk.substring(0, 2));
+
+      const nextReading = nextReadingChunk
+        .replace("\nInformações", "")
+        .replace(String(readingDays), "");
+
+      return { previousReading, currentReading, readingDays, nextReading };
+    }
+    if (biPhasicReferenceDateNearChunkIndex) {
+      const readingsChunk = sections[
+        biPhasicReferenceDateNearChunkIndex
+      ].replace("diasPróxima\nBifásico", "");
+
+      const readingsMidIndex = Math.floor(readingsChunk.length / 2);
+      const previousReading = readingsChunk.slice(0, readingsMidIndex);
+      const currentReading = readingsChunk.slice(readingsMidIndex);
+
+      const nextReadingChunk =
+        sections[biPhasicReferenceDateNearChunkIndex + 1];
+
+      const readingDays = Number(nextReadingChunk.substring(0, 2));
+
+      const nextReading = nextReadingChunk
+        .replace("\nInformações", "")
+        .replace(String(readingDays), "");
+
+      return { previousReading, currentReading, readingDays, nextReading };
+    }
   }
   deleteFiles(filesArray: Array<{ name; data }>) {
     filesArray.forEach(({ name }) => {
