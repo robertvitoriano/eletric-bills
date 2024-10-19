@@ -1,7 +1,8 @@
 import { Repository } from "typeorm";
 import { PostgresDataSource } from "../../../shared/infra/database/PostgresDataSource";
 import { Customer } from "../../entities/Customer";
-class CustomersRepository implements CustomersRepository {
+import { ICustomersRepository } from "../../repositories/ICustomersRepository";
+class CustomersRepository implements ICustomersRepository {
   private customerRepository: Repository<Customer>;
 
   constructor() {

@@ -66,8 +66,8 @@ export class CreateInvoiceTable1729272463130 implements MigrationInterface {
           {
             name: "url",
             type: "varchar",
-            length: "20",
-            isNullable: false,
+            length: "255",
+            isNullable: true,
           },
         ],
       }),

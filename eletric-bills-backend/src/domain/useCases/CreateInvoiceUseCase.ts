@@ -5,7 +5,7 @@ import { deleteFile } from "../../utils/file";
 import { uploadFile } from "../../utils/upload-file";
 import { IInvoicesRepository } from "../repositories/IInvoicesRepository";
 import { ICustomersRepository } from "../repositories/ICustomersRepository";
-import { Customer } from "../entities/Customer";
+import { parse } from "date-fns";
 @injectable()
 class CreateInvoicesUseCase {
   constructor(
@@ -82,15 +82,14 @@ class CreateInvoicesUseCase {
       const customerInstalationNumber =
         this.getCustomerInstalationNumber(sectionsTrimmed);
 
-      const customer = await this.customersRepository.find({
+      let customer = await this.customersRepository.find({
         cpf_cnpj: customerCpfOrCnpj,
         installation_number: customerInstalationNumber,
         customer_number: customerNumber,
       });
 
-      let storedCustomer: Customer;
       if (!customer) {
-        storedCustomer = await this.customersRepository.store({
+        customer = await this.customersRepository.store({
           address: customerAddres,
           cpf_cnpj: customerCpfOrCnpj,
           customer_number: customerNumber,
@@ -99,11 +98,62 @@ class CreateInvoicesUseCase {
         });
       }
 
+      let currentInvoice = await this.invoicesRepository.find({
+        bar_code_number: barCodeNumber,
+      });
+      const currentInvoiceYear = new Date(invoiceDueDate).getFullYear();
+      const { nextYear, previousYear } = this.getAdjustedYear(
+        currentReading,
+        currentInvoiceYear
+      );
+      if (!currentInvoice) {
+        currentInvoice = await this.invoicesRepository.store({
+          bar_code_number: barCodeNumber,
+          current_reading: parse(
+            `${currentReading}/${currentInvoiceYear}`,
+            "dd/MM/yyyy",
+            new Date()
+          ),
+          next_reading: parse(
+            `${nextReading}/${nextYear}`,
+            "dd/MM/yyyy",
+            new Date()
+          ),
+          previous_reading: parse(
+            `${previousReading}/${previousYear}`,
+            "dd/MM/yyyy",
+            new Date()
+          ),
+          due_date: parse(invoiceDueDate, "dd/MM/yyyy", new Date()),
+          reading_days: readingDays,
+          reference: invoiceReferenceDate,
+          total_amount: totalCost,
+          url,
+          customer_id: customer.id,
+        });
+      }
+      console.log({ currentInvoice });
       await deleteFile(path);
       this.deleteFiles(filesForExtraction);
     }
   }
+  private getAdjustedYear(
+    readingDate: string,
+    currentYear: number
+  ): { nextYear: number; previousYear: number } {
+    const [day, month] = readingDate.split("/").map(Number);
 
+    let nextYear = currentYear;
+    let previousYear = currentYear;
+
+    if (month === 12) {
+      nextYear = currentYear + 1;
+    } else if (month === 1) {
+      previousYear = currentYear - 1;
+    }
+
+    return { nextYear, previousYear };
+  }
   getPublicIluminationCost(sections: Array<string>): number {
     const publicIluminationReferenceChunkIndex = sections.findIndex(
       (section, index) =>
@@ -284,7 +334,7 @@ class CreateInvoicesUseCase {
     previousReading: string;
     currentReading: string;
     nextReading: string;
-    readingDays: string;
+    readingDays: number;
   } {
     const referenceDateNearChunkIndex = sections.findIndex(
       (section, index) =>
@@ -302,7 +352,7 @@ class CreateInvoicesUseCase {
     const currentReading = readingsChunk.slice(readingsMidIndex);
 
     const nextReadingChunk = sections[referenceDateNearChunkIndex + 1];
-    const readingDays = nextReadingChunk.substring(0, 2);
+    const readingDays = Number(nextReadingChunk.substring(0, 2));
     const nextReading = nextReadingChunk
       .replace("\nInformações", "")
       .replace(String(readingDays), "");

@@ -7,7 +7,7 @@ import { app } from "../../app";
 import { seedInvoiceItemTypes } from "../database/seed/invoice-item-types";
 
 const startServer = async () => {
-  // await runMigrations();
+  await runMigrations();
   await seedInvoiceItemTypes();
   await initializeDatabase();
 

@@ -11,6 +11,7 @@
     "axios": "^1.7.4",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
@@ -61,9 +62,8 @@
     "seed:admin": "ts-node src/shared/infra/typeorm/seed/admin.ts",
     "seed:notification-types": "ts-node src/shared/infra/typeorm/seed/notification-types.ts",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "migrations:run":"npm run typeorm migration:run -- --dataSource src/shared/infra/database/PostgresDataSource.ts",
+    "migrations:run": "npm run typeorm migration:run -- --dataSource src/shared/infra/database/PostgresDataSource.ts",
     "migration:create": "npm run typeorm migration:generate -- --dataSource src/shared/infra/database/PostgresDataSource.ts",
     "migration:revert": "npm run typeorm migration:revert -- -d ./src/shared/database/PostgresDataSource.ts"
-  
   }
 }

@@ -8,10 +8,19 @@ class InvoicesRepository implements IInvoicesRepository {
   constructor() {
     this.invoiceRepository = PostgresDataSource.getRepository(Invoice);
   }
+  async find(data: Partial<Invoice>): Promise<Invoice | null> {
+    const invoice = await this.invoiceRepository.findOne({
+      where: { ...data },
+    });
+    return invoice;
+  }
 
-  async store(invoiceData: Invoice): Promise<Invoice> {
+  async store(
+    invoiceData: Omit<Invoice, "id" | "invoice_items" | "customer">
+  ): Promise<Invoice> {
     const invoice = this.invoiceRepository.create(invoiceData);
-    return await this.invoiceRepository.save(invoice);
+    const storedInvoice = await this.invoiceRepository.save(invoice);
+    return storedInvoice;
   }
 }
 

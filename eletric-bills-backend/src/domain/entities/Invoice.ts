@@ -15,7 +15,7 @@ export class Invoice {
   id: number;
 
   @Column({ type: "uuid" })
-  customer_id: number;
+  customer_id: string;
 
   @ManyToOne(() => Customer, (customer) => customer.invoices, {
     onDelete: "CASCADE",
@@ -44,7 +44,7 @@ export class Invoice {
   @Column({ type: "date" })
   next_reading: Date;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar", length: 255, nullable: true })
   url: string;
 
   @Column({ type: "varchar", length: 60 })
