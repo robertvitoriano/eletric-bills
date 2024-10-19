@@ -53,6 +53,8 @@ class CreateInvoicesUseCase {
         sectionsTrimmed,
         invoiceDueDate
       );
+      const invoiceReferenceDate =
+        this.getInvoiceReferenceDate(sectionsTrimmed);
       console.log({
         publicIluminationCost,
         compensatedGDEnergy,
@@ -61,6 +63,7 @@ class CreateInvoicesUseCase {
         totalCost,
         invoiceDueDate,
         barCodeNumber,
+        invoiceReferenceDate,
       });
       const { customerName, customerNameLastIndex } =
         this.getCustomerName(sections);
@@ -78,6 +81,7 @@ class CreateInvoicesUseCase {
         installation_number: customerInstalationNumber,
         customer_number: customerNumber,
       });
+
       let storedCustomer: Customer;
       if (!customer) {
         storedCustomer = await this.customersRepository.store({
@@ -240,29 +244,35 @@ class CreateInvoicesUseCase {
   }
 
   getInvoiceBarCodeNumber(sections: Array<string>, dueDate: string): string {
-    const barCodeNumberReferenceChunkIndex = sections.findIndex((section) =>
+    const barCodeReferenceChunkIndex = sections.findIndex((section) =>
       section.includes(`${dueDate}R$`)
     );
-    let barCodeNumber: string = "";
-    if (barCodeNumberReferenceChunkIndex > 1) {
-      const barCodeInitialChunk = sections[barCodeNumberReferenceChunkIndex];
-      barCodeNumber = barCodeInitialChunk.substring(
+    let barCode: string = "";
+    if (barCodeReferenceChunkIndex > 1) {
+      const barCodeInitialChunk = sections[barCodeReferenceChunkIndex];
+      barCode = barCodeInitialChunk.substring(
         barCodeInitialChunk.length - 13,
         barCodeInitialChunk.length
       );
     }
-    for (
-      let i = barCodeNumberReferenceChunkIndex + 1;
-      i < sections.length;
-      i++
-    ) {
+    for (let i = barCodeReferenceChunkIndex + 1; i < sections.length; i++) {
       if (sections[i].includes("\n")) {
-        barCodeNumber += " " + sections[i].split("\n")[0];
+        barCode += " " + sections[i].split("\n")[0];
         break;
       }
-      barCodeNumber += " " + sections[i];
+      barCode += " " + sections[i];
     }
-    return barCodeNumber;
+    return barCode;
+  }
+  getInvoiceReferenceDate(sections: Array<string>) {
+    const referenceDateNearChunkIndex = sections.findIndex(
+      (section, index) =>
+        section.includes("(R$)\n") &&
+        sections[index - 1].includes("pagar") &&
+        sections[index - 2].includes("a") &&
+        sections[index - 3].includes("a")
+    );
+    return sections[referenceDateNearChunkIndex + 1];
   }
   deleteFiles(filesArray: Array<{ name; data }>) {
     filesArray.forEach(({ name }) => {
