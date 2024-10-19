@@ -7,6 +7,7 @@ import { IInvoicesRepository } from "../../repositories/IInvoicesRepository";
 import { ICustomersRepository } from "../../repositories/ICustomersRepository";
 import { parse } from "date-fns";
 import path from "path";
+import { InvoiceItemTypes } from "../../../shared/enums/invoice-item-types";
 @injectable()
 class CreateInvoicesUseCase {
   constructor(
@@ -44,7 +45,6 @@ class CreateInvoicesUseCase {
       const damageCompensations = this.getDamageCompensations(sectionsTrimmed);
       const paymentRefund = this.getPaymentRefund(sectionsTrimmed);
       const yellowFlagCost = this.getYellowFlagCost(sectionsTrimmed);
-      const totalCost = this.getTotalCost(sectionsTrimmed);
       const compensatedGDEnergy = this.getCompensatedEnergyGD(sectionsTrimmed);
       const publicIluminationCost =
         this.getPublicIluminationCost(sectionsTrimmed);
@@ -57,27 +57,12 @@ class CreateInvoicesUseCase {
         sectionsTrimmed,
         invoiceDueDate
       );
+      const totalCost = this.getTotalCost(sectionsTrimmed);
       const invoiceReferenceDate =
         this.getInvoiceReferenceDate(sectionsTrimmed);
       const { previousReading, currentReading, nextReading, readingDays } =
         this.getInvoiceReadingDates(sectionsTrimmed);
-      console.log({
-        publicIluminationCost,
-        damageCompensations,
-        compensatedGDEnergy,
-        sceeWithoutICMSEnergy,
-        energyConsumption,
-        totalCost,
-        invoiceDueDate,
-        barCode,
-        invoiceReferenceDate,
-        previousReading,
-        currentReading,
-        nextReading,
-        readingDays,
-        paymentRefund,
-        yellowFlagCost,
-      });
+
       const { customerName, customerNameLastIndex } = this.getCustomerName(
         sections,
         barCodeLastElement
@@ -140,9 +125,53 @@ class CreateInvoicesUseCase {
           url,
           customer_id: customer.id,
         });
+        this.invoicesRepository.storeItem({
+          invoice_id: currentInvoice.id,
+          invoice_item_type_id: InvoiceItemTypes.ELECTRICITY.id,
+          quantity: energyConsumption.quantity,
+          total_value: energyConsumption.cost,
+        });
+        this.invoicesRepository.storeItem({
+          invoice_id: currentInvoice.id,
+          invoice_item_type_id: InvoiceItemTypes.SCEE_ENERGY.id,
+          quantity: sceeWithoutICMSEnergy.quantity,
+          total_value: sceeWithoutICMSEnergy.cost,
+        });
+        this.invoicesRepository.storeItem({
+          invoice_id: currentInvoice.id,
+          invoice_item_type_id: InvoiceItemTypes.COMPENSATED_ENERGY.id,
+          quantity: compensatedGDEnergy.quantity,
+          total_value: compensatedGDEnergy.cost,
+        });
+        if (!isNaN(publicIluminationCost)) {
+          this.invoicesRepository.storeItem({
+            invoice_id: currentInvoice.id,
+            invoice_item_type_id:
+              InvoiceItemTypes.MUNICIPAL_LIGHTING_CONTRIBUTION.id,
+            total_value: publicIluminationCost,
+            quantity: null,
+          });
+        }
+        if (!isNaN(paymentRefund)) {
+          this.invoicesRepository.storeItem({
+            invoice_id: currentInvoice.id,
+            invoice_item_type_id: InvoiceItemTypes.PAYMENT_REFUND.id,
+            total_value: paymentRefund,
+            quantity: null,
+          });
+        }
+        if (!isNaN(yellowFlagCost)) {
+          this.invoicesRepository.storeItem({
+            invoice_id: currentInvoice.id,
+            invoice_item_type_id: InvoiceItemTypes.YELLOW_FLAG.id,
+            total_value: yellowFlagCost,
+            quantity: null,
+          });
+        }
       }
+
       await deleteFile(path);
-      //  this.deleteFiles(filesForExtraction);
+      this.deleteFiles(filesForExtraction);
     }
   }
 

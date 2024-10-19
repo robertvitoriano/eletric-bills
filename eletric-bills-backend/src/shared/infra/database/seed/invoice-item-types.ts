@@ -24,7 +24,6 @@ export async function seedInvoiceItemTypes() {
     const typesToInsert = newItemTypes.filter(
       (item) => !existingTypeNames.has(item.type_name)
     );
-
     if (typesToInsert.length > 0) {
       await PostgresDataSource.manager.save(
         typesToInsert.map((item) =>

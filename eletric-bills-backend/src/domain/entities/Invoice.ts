@@ -12,7 +12,7 @@ import { InvoiceItem } from "./InvoiceItem";
 @Entity("invoices")
 export class Invoice {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ type: "uuid" })
   customer_id: string;
