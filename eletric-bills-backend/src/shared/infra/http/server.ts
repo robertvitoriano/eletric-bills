@@ -1,8 +1,5 @@
 import http from "http";
-import {
-  initializeDatabase,
-  runMigrations,
-} from "../database/DatabaseConnection";
+import { initializeDatabase, runMigrations } from "../database/DatabaseConnection";
 import { app } from "../../app";
 import { seedInvoiceItemTypes } from "../database/seed/invoice-item-types";
 

@@ -14,7 +14,21 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "eletric_invoices_db", "-U", "docker", "-d", "eletric_invoices_db", "-p", "5432", "-t", "5"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-h",
+          "eletric_invoices_db",
+          "-U",
+          "docker",
+          "-d",
+          "eletric_invoices_db",
+          "-p",
+          "5432",
+          "-t",
+          "5",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5

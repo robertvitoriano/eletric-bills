@@ -9,9 +9,7 @@ class CustomersRepository implements ICustomersRepository {
     this.customerRepository = PostgresDataSource.getRepository(Customer);
   }
 
-  async store(
-    customerData: Omit<Customer, "id" | "consumptions" | "invoices">
-  ): Promise<Customer> {
+  async store(customerData: Omit<Customer, "id" | "consumptions" | "invoices">): Promise<Customer> {
     const customer = this.customerRepository.create(customerData);
     return await this.customerRepository.save(customer);
   }

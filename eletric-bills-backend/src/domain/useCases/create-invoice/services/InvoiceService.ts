@@ -16,28 +16,13 @@ export class InvoiceService {
       bar_code_number: data.barCode,
     });
     const currentInvoiceYear = new Date(data.invoiceDueDate).getFullYear();
-    const { nextYear, previousYear } = this.getAdjustedYear(
-      data.currentReading,
-      currentInvoiceYear
-    );
+    const { nextYear, previousYear } = this.getAdjustedYear(data.currentReading, currentInvoiceYear);
     if (!currentInvoice) {
       currentInvoice = await this.invoicesRepository.store({
         bar_code_number: data.barCode,
-        current_reading: parse(
-          `${data.currentReading}/${currentInvoiceYear}`,
-          "dd/MM/yyyy",
-          new Date()
-        ),
-        next_reading: parse(
-          `${data.nextReading}/${nextYear}`,
-          "dd/MM/yyyy",
-          new Date()
-        ),
-        previous_reading: parse(
-          `${data.previousReading}/${previousYear}`,
-          "dd/MM/yyyy",
-          new Date()
-        ),
+        current_reading: parse(`${data.currentReading}/${currentInvoiceYear}`, "dd/MM/yyyy", new Date()),
+        next_reading: parse(`${data.nextReading}/${nextYear}`, "dd/MM/yyyy", new Date()),
+        previous_reading: parse(`${data.previousReading}/${previousYear}`, "dd/MM/yyyy", new Date()),
         due_date: parse(data.invoiceDueDate, "dd/MM/yyyy", new Date()),
         reading_days: data.readingDays,
         reference: data.invoiceReferenceDate,
@@ -66,8 +51,7 @@ export class InvoiceService {
       if (!isNaN(data.publicIluminationCost)) {
         this.invoicesRepository.storeItem({
           invoice_id: currentInvoice.id,
-          invoice_item_type_id:
-            InvoiceItemTypes.MUNICIPAL_LIGHTING_CONTRIBUTION.id,
+          invoice_item_type_id: InvoiceItemTypes.MUNICIPAL_LIGHTING_CONTRIBUTION.id,
           total_value: data.publicIluminationCost,
           quantity: null,
         });
@@ -98,10 +82,7 @@ export class InvoiceService {
       }
     }
   }
-  private getAdjustedYear(
-    readingDate: string,
-    currentYear: number
-  ): { nextYear: number; previousYear: number } {
+  private getAdjustedYear(readingDate: string, currentYear: number): { nextYear: number; previousYear: number } {
     const [_, month] = readingDate.split("/").map(Number);
 
     let nextYear = currentYear;

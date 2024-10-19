@@ -1,9 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
 export class CreateInvoiceItemTable1729272721432 implements MigrationInterface {
   name = "CreateInvoiceItemTable1729272721432";
@@ -72,9 +67,7 @@ export class CreateInvoiceItemTable1729272721432 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable("invoice_items");
-    const invoiceForeignKey = table.foreignKeys.find(
-      (fk) => fk.columnNames.indexOf("invoice_id") !== -1
-    );
+    const invoiceForeignKey = table.foreignKeys.find((fk) => fk.columnNames.indexOf("invoice_id") !== -1);
     if (invoiceForeignKey) {
       await queryRunner.dropForeignKey("invoice_items", invoiceForeignKey);
     }
@@ -83,10 +76,7 @@ export class CreateInvoiceItemTable1729272721432 implements MigrationInterface {
       (fk) => fk.columnNames.indexOf("invoice_item_type_id") !== -1
     );
     if (invoiceItemTypeForeignKey) {
-      await queryRunner.dropForeignKey(
-        "invoice_items",
-        invoiceItemTypeForeignKey
-      );
+      await queryRunner.dropForeignKey("invoice_items", invoiceItemTypeForeignKey);
     }
 
     await queryRunner.dropTable("invoice_items");

@@ -14,10 +14,7 @@ interface InvoiceItemType {
   type: InvoiceItemTypeEnum;
 }
 
-export const InvoiceItemTypes: Record<
-  keyof typeof InvoiceItemTypeEnum,
-  InvoiceItemType
-> = {
+export const InvoiceItemTypes: Record<keyof typeof InvoiceItemTypeEnum, InvoiceItemType> = {
   ELECTRICITY: {
     id: 1,
     type: InvoiceItemTypeEnum.ELECTRICITY,

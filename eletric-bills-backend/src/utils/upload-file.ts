@@ -4,9 +4,7 @@ import path from "path";
 import crypto from "crypto";
 import { deleteFile } from "./file";
 
-export async function uploadFile({
-  file,
-}): Promise<{ url: string; path: string }> {
+export async function uploadFile({ file }): Promise<{ url: string; path: string }> {
   const s3 = new AWS.S3();
   const tmpDir = path.resolve(__dirname, "../../tmp/");
 

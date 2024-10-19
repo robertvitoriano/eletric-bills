@@ -14,11 +14,8 @@ class CreateInvoicesUseCase {
       const invoiceService = container.resolve(InvoiceService);
 
       const eletricityInvoiceParserService = new EletricityInvoiceParser();
-      const { customerInfo, invoiceParameters } =
-        await eletricityInvoiceParserService.extractData(path);
-      const { customerId } = await customerService.storeNewCustomer(
-        customerInfo
-      );
+      const { customerInfo, invoiceParameters } = await eletricityInvoiceParserService.extractData(path);
+      const { customerId } = await customerService.storeNewCustomer(customerInfo);
 
       await invoiceService.storeNewInvoice({
         ...invoiceParameters,

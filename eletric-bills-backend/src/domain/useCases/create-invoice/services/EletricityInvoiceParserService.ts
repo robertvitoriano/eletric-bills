@@ -31,13 +31,11 @@ export class EletricityInvoiceParser {
     const sceeWithoutICMSEnergy = this.getSCEEWithoutICMSEnergy();
     const energyConsumption = this.getEnergyConsumption();
     const invoiceDueDate = this.getInvoiceDueDate();
-    const { barCode, barCodeLastElement } =
-      this.getInvoiceBarCodeNumber(invoiceDueDate);
+    const { barCode, barCodeLastElement } = this.getInvoiceBarCodeNumber(invoiceDueDate);
     this.barCodeLastElement = barCodeLastElement;
     const totalCost = this.getTotalCost();
     const invoiceReferenceDate = this.getInvoiceReferenceDate();
-    const { previousReading, currentReading, nextReading, readingDays } =
-      this.getInvoiceReadingDates();
+    const { previousReading, currentReading, nextReading, readingDays } = this.getInvoiceReadingDates();
 
     return {
       compensatedGDEnergy,
@@ -72,14 +70,8 @@ export class EletricityInvoiceParser {
     };
   }
   private getPublicIluminationCost(): number {
-    const publicIluminationReferenceChunkIndex = this.sectionsTrimmed.findIndex(
-      (section) => section === "Municipal"
-    );
-    return Number(
-      this.sectionsTrimmed[publicIluminationReferenceChunkIndex + 1]
-        .split("\n")[0]
-        .replace(",", ".")
-    );
+    const publicIluminationReferenceChunkIndex = this.sectionsTrimmed.findIndex((section) => section === "Municipal");
+    return Number(this.sectionsTrimmed[publicIluminationReferenceChunkIndex + 1].split("\n")[0].replace(",", "."));
   }
 
   private getEnergyConsumption(): {
@@ -87,16 +79,10 @@ export class EletricityInvoiceParser {
     cost: number;
   } {
     const quantity = Number(
-      this.sectionsTrimmed[
-        this.sectionsTrimmed.findIndex((section) => section === "ElétricakWh") +
-          1
-      ]
+      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ElétricakWh") + 1]
     );
     const cost = Number(
-      this.sectionsTrimmed[
-        this.sectionsTrimmed.findIndex((section) => section === "ElétricakWh") +
-          3
-      ].replace(",", ".")
+      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ElétricakWh") + 3].replace(",", ".")
     );
     return { quantity, cost };
   }
@@ -105,14 +91,10 @@ export class EletricityInvoiceParser {
     cost: number;
   } {
     const quantity = Number(
-      this.sectionsTrimmed[
-        this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 1
-      ].replace(".", "")
+      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 1].replace(".", "")
     );
     const cost = Number(
-      this.sectionsTrimmed[
-        this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 3
-      ]
+      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 3]
         .replace(",", ".")
         .replace(".", "")
     );
@@ -124,29 +106,18 @@ export class EletricityInvoiceParser {
     cost: number;
   } {
     const gdReferenceChunkIndex = this.sectionsTrimmed.findIndex(
-      (section, index) =>
-        section === "IkWh" && this.sectionsTrimmed[index - 1] === "GD"
+      (section, index) => section === "IkWh" && this.sectionsTrimmed[index - 1] === "GD"
     );
-    const quantity = Number(
-      this.sectionsTrimmed[gdReferenceChunkIndex + 1].replace(".", "")
-    );
-    const cost = Number(
-      this.sectionsTrimmed[gdReferenceChunkIndex + 3]
-        .replace(",", ".")
-        .replace(".", "")
-    );
+    const quantity = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 1].replace(".", ""));
+    const cost = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 3].replace(",", ".").replace(".", ""));
 
     return { quantity, cost };
   }
   private getDamageCompensations(): number {
-    const damageCompensationsChunkIndex = this.sectionsTrimmed.findIndex(
-      (section) => section.includes("Danos")
-    );
+    const damageCompensationsChunkIndex = this.sectionsTrimmed.findIndex((section) => section.includes("Danos"));
 
     const cost = Number(
-      this.sectionsTrimmed[damageCompensationsChunkIndex + 1]
-        .replace(",", ".")
-        .replace("\nTOTAL", "")
+      this.sectionsTrimmed[damageCompensationsChunkIndex + 1].replace(",", ".").replace("\nTOTAL", "")
     );
 
     return cost;
@@ -160,57 +131,37 @@ export class EletricityInvoiceParser {
     );
 
     const cost = Number(
-      this.sectionsTrimmed[damageCompensationsChunkIndex + 3]
-        .replace(",", ".")
-        .replace("\nTOTAL", "")
+      this.sectionsTrimmed[damageCompensationsChunkIndex + 3].replace(",", ".").replace("\nTOTAL", "")
     );
 
     return cost;
   }
   private getYellowFlagCost(): number {
-    const yellowFlagCostChunkIndex = this.sectionsTrimmed.findIndex(
-      (section, index) => section.includes("Bandeira")
-    );
-    for (
-      let i = yellowFlagCostChunkIndex + 1;
-      i < this.sectionsTrimmed.length;
-      i++
-    ) {
+    const yellowFlagCostChunkIndex = this.sectionsTrimmed.findIndex((section, index) => section.includes("Bandeira"));
+    for (let i = yellowFlagCostChunkIndex + 1; i < this.sectionsTrimmed.length; i++) {
       if (!isNaN(Number(this.sectionsTrimmed[i].charAt(0)))) {
-        const cost = Number(
-          this.sectionsTrimmed[i].replace(",", ".").replace("\nHistórico", "")
-        );
+        const cost = Number(this.sectionsTrimmed[i].replace(",", ".").replace("\nHistórico", ""));
         return cost;
       }
     }
   }
   private getTotalCost(): number {
-    const totalCostReferenceChunkIndex = this.sectionsTrimmed.findIndex(
-      (section) => section.includes("\nTOTAL")
-    );
+    const totalCostReferenceChunkIndex = this.sectionsTrimmed.findIndex((section) => section.includes("\nTOTAL"));
 
     if (totalCostReferenceChunkIndex > 1) {
       return Number(
-        this.sectionsTrimmed[totalCostReferenceChunkIndex + 1]
-          .replace("\nHistórico", "")
-          .replace(",", ".")
+        this.sectionsTrimmed[totalCostReferenceChunkIndex + 1].replace("\nHistórico", "").replace(",", ".")
       );
     }
   }
 
   private getInvoiceDueDate(): string {
     const dueDateReferenceChunkIndex = this.sectionsTrimmed.findIndex(
-      (section) =>
-        section.includes("R$") &&
-        !isNaN(Number(section.split("R$")[1].charAt(0)))
+      (section) => section.includes("R$") && !isNaN(Number(section.split("R$")[1].charAt(0)))
     );
-    const [dueDateChunk] =
-      this.sectionsTrimmed[dueDateReferenceChunkIndex].split("R$");
+    const [dueDateChunk] = this.sectionsTrimmed[dueDateReferenceChunkIndex].split("R$");
 
-    return dueDateChunk.substring(
-      dueDateChunk.length - 10,
-      dueDateChunk.length
-    );
+    return dueDateChunk.substring(dueDateChunk.length - 10, dueDateChunk.length);
   }
 
   private getCustomerName(): {
@@ -219,9 +170,7 @@ export class EletricityInvoiceParser {
   } {
     let customerName = "";
     let customerNameReferenteIndex = 0;
-    const automaticReferenceIndex = this.sections.findIndex((section) =>
-      section.includes("AUTOMÁTICO\n")
-    );
+    const automaticReferenceIndex = this.sections.findIndex((section) => section.includes("AUTOMÁTICO\n"));
 
     if (automaticReferenceIndex > 1) {
       customerNameReferenteIndex = automaticReferenceIndex;
@@ -234,11 +183,7 @@ export class EletricityInvoiceParser {
 
     let customerNameLastIndex: number;
 
-    for (
-      let i = customerNameReferenteIndex + 1;
-      i < this.sections.length;
-      i++
-    ) {
+    for (let i = customerNameReferenteIndex + 1; i < this.sections.length; i++) {
       if (this.sections[i].includes("\n")) {
         customerName += " " + this.sections[i].split("\n")[0];
         customerNameLastIndex = i;
@@ -252,9 +197,7 @@ export class EletricityInvoiceParser {
     const cpfCnpjReference = this.sections.findIndex(
       (section) => section.includes("\nCNPJ") || section.includes("\nCPF")
     );
-    return this.sections[cpfCnpjReference + 1]
-      .replace("\n", "")
-      .replace("INSCRIÇÃO", "");
+    return this.sections[cpfCnpjReference + 1].replace("\n", "").replace("INSCRIÇÃO", "");
   }
   private getCustomerAddress(customerNameLastIndex: number): string {
     let address: string = "";
@@ -273,15 +216,11 @@ export class EletricityInvoiceParser {
   }
 
   private getCustomerNumber(): string {
-    const customerNumberReferenteIndex = this.sectionsTrimmed.findIndex(
-      (section) => section.includes("INSTALAÇÃO\n")
-    );
+    const customerNumberReferenteIndex = this.sectionsTrimmed.findIndex((section) => section.includes("INSTALAÇÃO\n"));
     return this.sectionsTrimmed[customerNumberReferenteIndex + 1];
   }
   private getCustomerInstalationNumber(): string {
-    const customerNumberReferenteIndex = this.sectionsTrimmed.findIndex(
-      (section) => section.includes("INSTALAÇÃO\n")
-    );
+    const customerNumberReferenteIndex = this.sectionsTrimmed.findIndex((section) => section.includes("INSTALAÇÃO\n"));
     return this.sectionsTrimmed[customerNumberReferenteIndex + 2];
   }
 
@@ -289,24 +228,14 @@ export class EletricityInvoiceParser {
     barCode: string;
     barCodeLastElement: string;
   } {
-    const barCodeReferenceChunkIndex = this.sectionsTrimmed.findIndex(
-      (section) => section.includes(`${dueDate}R$`)
-    );
+    const barCodeReferenceChunkIndex = this.sectionsTrimmed.findIndex((section) => section.includes(`${dueDate}R$`));
     let barCode: string = "";
     let barCodeLastElement = "";
     if (barCodeReferenceChunkIndex > 1) {
-      const barCodeInitialChunk =
-        this.sectionsTrimmed[barCodeReferenceChunkIndex];
-      barCode = barCodeInitialChunk.substring(
-        barCodeInitialChunk.length - 13,
-        barCodeInitialChunk.length
-      );
+      const barCodeInitialChunk = this.sectionsTrimmed[barCodeReferenceChunkIndex];
+      barCode = barCodeInitialChunk.substring(barCodeInitialChunk.length - 13, barCodeInitialChunk.length);
     }
-    for (
-      let i = barCodeReferenceChunkIndex + 1;
-      i < this.sectionsTrimmed.length;
-      i++
-    ) {
+    for (let i = barCodeReferenceChunkIndex + 1; i < this.sectionsTrimmed.length; i++) {
       if (this.sectionsTrimmed[i].includes("\n")) {
         barCode += " " + this.sectionsTrimmed[i].split("\n")[0];
         barCodeLastElement = this.sectionsTrimmed[i].split("\n")[0];
@@ -332,55 +261,47 @@ export class EletricityInvoiceParser {
     nextReading: string;
     readingDays: number;
   } {
-    const threePhaseReferenceDateNearChunkIndex =
-      this.sectionsTrimmed.findIndex(
-        (section, index) =>
-          section.includes("atividades") &&
-          this.sectionsTrimmed[index - 1].includes("outras") &&
-          this.sectionsTrimmed[index - 2].includes("e") &&
-          this.sectionsTrimmed[index - 3].includes("Trifásico")
-      );
-    const biPhasicReferenceDateNearChunkIndex = this.sectionsTrimmed.findIndex(
-      (section) => section.includes("Bifásico")
+    const threePhaseReferenceDateNearChunkIndex = this.sectionsTrimmed.findIndex(
+      (section, index) =>
+        section.includes("atividades") &&
+        this.sectionsTrimmed[index - 1].includes("outras") &&
+        this.sectionsTrimmed[index - 2].includes("e") &&
+        this.sectionsTrimmed[index - 3].includes("Trifásico")
+    );
+    const biPhasicReferenceDateNearChunkIndex = this.sectionsTrimmed.findIndex((section) =>
+      section.includes("Bifásico")
     );
 
     if (threePhaseReferenceDateNearChunkIndex > 1) {
-      const readingsChunk = this.sectionsTrimmed[
-        threePhaseReferenceDateNearChunkIndex
-      ].replace("atividades", "");
+      const readingsChunk = this.sectionsTrimmed[threePhaseReferenceDateNearChunkIndex].replace("atividades", "");
 
       const readingsMidIndex = Math.floor(readingsChunk.length / 2);
       const previousReading = readingsChunk.slice(0, readingsMidIndex);
       const currentReading = readingsChunk.slice(readingsMidIndex);
 
-      const nextReadingChunk =
-        this.sectionsTrimmed[threePhaseReferenceDateNearChunkIndex + 1];
+      const nextReadingChunk = this.sectionsTrimmed[threePhaseReferenceDateNearChunkIndex + 1];
 
       const readingDays = Number(nextReadingChunk.substring(0, 2));
 
-      const nextReading = nextReadingChunk
-        .replace("\nInformações", "")
-        .replace(String(readingDays), "");
+      const nextReading = nextReadingChunk.replace("\nInformações", "").replace(String(readingDays), "");
 
       return { previousReading, currentReading, readingDays, nextReading };
     }
     if (biPhasicReferenceDateNearChunkIndex) {
-      const readingsChunk = this.sectionsTrimmed[
-        biPhasicReferenceDateNearChunkIndex
-      ].replace("diasPróxima\nBifásico", "");
+      const readingsChunk = this.sectionsTrimmed[biPhasicReferenceDateNearChunkIndex].replace(
+        "diasPróxima\nBifásico",
+        ""
+      );
 
       const readingsMidIndex = Math.floor(readingsChunk.length / 2);
       const previousReading = readingsChunk.slice(0, readingsMidIndex);
       const currentReading = readingsChunk.slice(readingsMidIndex);
 
-      const nextReadingChunk =
-        this.sectionsTrimmed[biPhasicReferenceDateNearChunkIndex + 1];
+      const nextReadingChunk = this.sectionsTrimmed[biPhasicReferenceDateNearChunkIndex + 1];
 
       const readingDays = Number(nextReadingChunk.substring(0, 2));
 
-      const nextReading = nextReadingChunk
-        .replace("\nInformações", "")
-        .replace(String(readingDays), "");
+      const nextReading = nextReadingChunk.replace("\nInformações", "").replace(String(readingDays), "");
 
       return { previousReading, currentReading, readingDays, nextReading };
     }

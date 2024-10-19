@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { Invoice } from "./Invoice";
 import { InvoiceItemType } from "./InvoiceItemType";
 
@@ -26,13 +20,9 @@ export class InvoiceItem {
   invoice_item_type_id: number;
 
   @JoinColumn({ name: "invoice_item_type_id" })
-  @ManyToOne(
-    () => InvoiceItemType,
-    (invoiceItemType) => invoiceItemType.invoice_items,
-    {
-      onDelete: "CASCADE",
-    }
-  )
+  @ManyToOne(() => InvoiceItemType, (invoiceItemType) => invoiceItemType.invoice_items, {
+    onDelete: "CASCADE",
+  })
   invoiceItemType: InvoiceItemType;
 
   @Column({ type: "numeric", precision: 10, scale: 3, nullable: true })

@@ -14,9 +14,7 @@ class CreateInvoiceController {
 
       const invoiceFile = invoice ? invoice[0] : null;
 
-      const invoiceStorageResponse = await createInvoiceUseCase.execute(
-        invoiceFile
-      );
+      const invoiceStorageResponse = await createInvoiceUseCase.execute(invoiceFile);
 
       return response.status(HttpStatusCode.Ok).json({
         message: "Invoice stored successfully",

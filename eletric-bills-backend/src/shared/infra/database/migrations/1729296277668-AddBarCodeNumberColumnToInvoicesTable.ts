@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
 
-export class AddBarCodeNumberColumnToInvoicesTable1729296277668
-  implements MigrationInterface
-{
+export class AddBarCodeNumberColumnToInvoicesTable1729296277668 implements MigrationInterface {
   name = "AddBarCodeNumberColumnToInvoicesTable1729296277668";
 
   public async up(queryRunner: QueryRunner): Promise<void> {

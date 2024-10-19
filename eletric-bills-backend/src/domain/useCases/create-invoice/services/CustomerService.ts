@@ -8,9 +8,7 @@ export class CustomerService {
     @inject("CustomersRepository")
     private customersRepository: ICustomersRepository
   ) {}
-  async storeNewCustomer(
-    data: IStoreCustomerDTO
-  ): Promise<{ customerId: string }> {
+  async storeNewCustomer(data: IStoreCustomerDTO): Promise<{ customerId: string }> {
     let customer = await this.customersRepository.find({
       cpf_cnpj: data.customerCpfOrCnpj,
       installation_number: data.customerInstalationNumber,

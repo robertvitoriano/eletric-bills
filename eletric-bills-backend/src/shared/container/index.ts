@@ -10,7 +10,4 @@ container.registerSingleton<ICustomersRepository>(
   CustomersRepository
 );
 
-container.registerSingleton<IInvoicesRepository>(
-  "InvoicesRepository",
-  InvoicesRepository
-);
+container.registerSingleton<IInvoicesRepository>("InvoicesRepository", InvoicesRepository);

@@ -1,27 +1,20 @@
 {
   "ts-node": {
-      "compilerOptions": {
-        "lib": [
-           "es5",
-           "es6"
-        ],
-        "target": "es5",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "outDir": "./build",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "resolveJsonModule": true,
-        "sourceMap": true,
-        "esModuleInterop": true,
-
-     },
+    "compilerOptions": {
+      "lib": ["es5", "es6"],
+      "target": "es5",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "outDir": "./build",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "resolveJsonModule": true,
+      "sourceMap": true,
+      "esModuleInterop": true
+    }
   },
   "compilerOptions": {
-    "lib": [
-       "es5",
-       "es6"
-    ],
+    "lib": ["es5", "es6"],
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -30,7 +23,6 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "sourceMap": true,
-    "esModuleInterop": true,
-
- },
+    "esModuleInterop": true
+  }
 }
