@@ -45,6 +45,7 @@ export interface Pagination {
   currentPage: number;
   total: number;
   pageTotal: number;
+  perPage: number;
 }
 
 export interface CustomersResponse {
@@ -53,7 +54,17 @@ export interface CustomersResponse {
   pagination: Pagination;
 }
 
-export async function getCustomersWithInvoices(): Promise<CustomersResponse> {
-  const response = await api.get<CustomersResponse>("/customers");
+export async function getCustomersWithInvoices(
+  queryParams: {
+    page?: number;
+    year?: number;
+    customerNumber?: string;
+    installationNumber?: string;
+  } = {}
+): Promise<CustomersResponse> {
+  const response = await api.get<CustomersResponse>("/customers", {
+    params: queryParams,
+  });
+
   return response.data;
 }

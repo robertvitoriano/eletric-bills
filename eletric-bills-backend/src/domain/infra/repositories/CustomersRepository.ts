@@ -25,9 +25,8 @@ class CustomersRepository implements ICustomersRepository {
     return total;
   }
 
-  async list(data: { page?: number; year?: number; customerId?: string }) {
-    const { page = 1, year, customerId } = data;
-    const limit = 10;
+  async list(data: { page?: number; year?: number; customerId?: string; limit: number }) {
+    const { page = 1, year, customerId, limit } = data;
     const offset = (page - 1) * limit || 0;
 
     const queryBuilder = this.customerRepository

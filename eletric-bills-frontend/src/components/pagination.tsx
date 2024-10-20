@@ -11,7 +11,7 @@ export const Pagination = (props: PaginationProps) => {
   const totalPages = Math.ceil(totalCount / perPage) || 1;
   return (
     <div className="flex items-center justify-between  k p-4 py-2">
-      <span className="text-sm">Total de {totalCount} item(s)</span>
+      <span className="text-sm">Total de {totalCount} cliente(s)</span>
       <div className="flex items-center gap-6 lg:gap-8">
         <div className="text-sm font-medium text-white">
           Página {pageIndex + 1} de {totalPages}

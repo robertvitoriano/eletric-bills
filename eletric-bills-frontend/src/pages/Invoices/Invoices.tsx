@@ -5,7 +5,13 @@ import pdfIconDisabled from "./../../assets/pdf_icon_disabled.png";
 import { Eye } from "lucide-react";
 import classNames from "classnames";
 import { Pagination } from "@/components/pagination";
-import { Customer, getCustomersWithInvoices, Invoice, InvoiceItem } from "@/api/get-customers-with-invoices";
+import {
+  Customer,
+  getCustomersWithInvoices,
+  Invoice,
+  InvoiceItem,
+  Pagination as IPagination,
+} from "@/api/get-customers-with-invoices";
 import { months } from "./invoice-mocks";
 import { DrawerDialog } from "@/components/DrawerDialog";
 
@@ -13,6 +19,7 @@ export function Invoices() {
   const [years, setYears] = useState<Array<number>>([]);
   const [selectedYear, setSelectedYear] = useState<number>();
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [pagination, setPagination] = useState<IPagination>({ pageTotal: 1, currentPage: 1, total: 1, perPage: 1 });
   useEffect(() => {
     loadData();
   }, []);
@@ -29,6 +36,7 @@ export function Invoices() {
 
     setCustomers(customersResponse.customers);
     setYears(customersResponse.availableYears as number[]);
+    setPagination(customersResponse.pagination);
   }
 
   function updateUrlQueryParam(year: number) {
@@ -248,7 +256,11 @@ export function Invoices() {
           </TableBody>
         </Table>
         <div className="p-4 rounded-lg bg-transparent text-white">
-          <Pagination pageIndex={0} perPage={10} totalCount={100} />
+          <Pagination
+            pageIndex={pagination.currentPage - 1}
+            perPage={pagination.perPage}
+            totalCount={pagination.total}
+          />
         </div>
       </div>
     </div>
