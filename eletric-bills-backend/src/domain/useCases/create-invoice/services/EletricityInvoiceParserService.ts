@@ -1,6 +1,6 @@
 import fs from "fs";
 import pdf from "pdf-parse";
-import { CustomerInfo, InvoiceParameters } from "./types";
+import { CustomerInfo, InvoiceParameters } from "../../types";
 
 export class EletricityInvoiceParser {
   private sections: Array<string>;

@@ -23,3 +23,7 @@ export type CustomerInfo = {
   customerNumber: string;
   customerInstalationNumber: string;
 };
+export interface Period {
+  start: Date;
+  end: Date;
+}

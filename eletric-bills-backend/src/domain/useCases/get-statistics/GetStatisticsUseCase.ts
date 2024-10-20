@@ -28,10 +28,12 @@ export class GetStatisticsUseCase {
     try {
       const totalConsumptionOfElectricity = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.ELECTRICITY.id,
+        "quantity",
         customerNumber ? customerNumber : undefined
       );
       const totalConsumptionOfSCEEEnergy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.SCEE_ENERGY.id,
+        "quantity",
         customerNumber ? customerNumber : undefined
       );
       const totalConsumptionOfElectricEnergy = totalConsumptionOfElectricity + totalConsumptionOfSCEEEnergy;

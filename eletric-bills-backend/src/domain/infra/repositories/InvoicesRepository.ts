@@ -11,10 +11,14 @@ class InvoicesRepository implements IInvoicesRepository {
     this.invoiceRepository = PostgresDataSource.getRepository(Invoice);
     this.invoiceItemRepository = PostgresDataSource.getRepository(InvoiceItem);
   }
-  async getSumOfInvoiceItemsByType(invoiceItemTypeId: number, customerId?: string): Promise<number> {
+  async getSumOfInvoiceItemsByType(
+    invoiceItemTypeId: number,
+    field: "total_value" | "quantity",
+    customerId?: string
+  ): Promise<number> {
     const queryBuilder = this.invoiceItemRepository
       .createQueryBuilder("invoiceItem")
-      .select("SUM(invoiceItem.total_value)", "total")
+      .select(`SUM(invoiceItem.${field})`, "total")
       .where("invoiceItem.invoice_item_type_id = :invoiceItemTypeId", { invoiceItemTypeId });
 
     if (customerId) {
@@ -24,7 +28,7 @@ class InvoicesRepository implements IInvoicesRepository {
     }
 
     const result = await queryBuilder.getRawOne();
-    return parseFloat(result?.total || "0"); // Return total or 0 if no records found
+    return parseFloat(result?.total || "0");
   }
 
   async storeItem(invoiceData: Omit<InvoiceItem, "id" | "invoice" | "invoiceItemType">): Promise<InvoiceItem> {
