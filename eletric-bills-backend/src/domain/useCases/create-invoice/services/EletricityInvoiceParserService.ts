@@ -94,9 +94,7 @@ export class EletricityInvoiceParser {
       this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 1].replace(".", "")
     );
     const cost = Number(
-      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 3]
-        .replace(",", ".")
-        .replace(".", "")
+      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 3].replace(",", ".")
     );
 
     return { quantity, cost };
@@ -109,7 +107,7 @@ export class EletricityInvoiceParser {
       (section, index) => section === "IkWh" && this.sectionsTrimmed[index - 1] === "GD"
     );
     const quantity = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 1].replace(".", ""));
-    const cost = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 3].replace(",", ".").replace(".", ""));
+    const cost = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 3].replace(",", "."));
 
     return { quantity, cost };
   }
