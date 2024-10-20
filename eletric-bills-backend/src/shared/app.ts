@@ -15,10 +15,18 @@ AWS.config.update({
 });
 
 const app = express();
-app.use(cors({ origin: "*", methods: ["GET", "POST", "DELETE", "PATCH"] }));
+
+app.use(
+  cors({
+    origin: ["http://localhost:5555", "https://eletric-invoices.robertvitoriano.com"],
+    methods: ["GET", "POST", "DELETE", "PATCH"],
+  })
+);
+
 app.use(express.json());
 app.use(morgan("common"));
 app.use(router);
+
 app.get("/", (request, response) => {
   response.json({ message: "My app is running" });
 });

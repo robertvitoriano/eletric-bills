@@ -1,20 +1,19 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { HttpStatusCode } from "axios";
-import { GetInvoicesByUsersUseCase } from "../../useCases/create-invoice/GetInvoicesByUserUseCase";
 
 class GetInvoicesByUserController {
   async handle(request: Request, response: Response): Promise<Response> {
     try {
       const { files } = request;
-      const GetInvoicesByUserUseCase = new GetInvoicesByUsersUseCase();
+      const getInvoicesByUserUseCase = container.resolve(GetInvoicesByUserUseCase);
       const { invoice } = files as {
         invoice?: Express.Multer.File[];
       };
 
       const invoiceFile = invoice ? invoice[0] : null;
 
-      const invoiceStorageResponse = await GetInvoicesByUserUseCase.execute(invoiceFile);
+      const invoiceStorageResponse = await getInvoicesByUserUseCase.execute(invoiceFile);
 
       return response.status(HttpStatusCode.Ok).json({
         message: "Invoice stored successfully",
