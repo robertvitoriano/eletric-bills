@@ -24,6 +24,9 @@ export function Dashboard() {
   const [economyWithGDValuesPerMonth, setEconomyWithGDValuesPerMonth] = useState<
     Array<{ month: string; totalWithoutGD: number; economyWithGD: number }>
   >([]);
+  const [consumedEnergyAndCompensatedEnergy, setConsumedEnergyAndCompensatedEnergy] =
+    useState<Array<{ month: string; consumedEnergy: number; compensatedEnergy: number }>>();
+
   useEffect(() => {
     loadStatistics();
   }, []);
@@ -35,6 +38,7 @@ export function Dashboard() {
     setTotalCostWithoutGDEnergy(statisticsResponse.totalCostWithoutGDEnergy);
     setGDEconomy(statisticsResponse.gdEconomy);
     setEconomyWithGDValuesPerMonth(statisticsResponse.economyWithGDValuesPerMonth);
+    setConsumedEnergyAndCompensatedEnergy(statisticsResponse.consumedEnergyAndCompensatedEnergy);
   }
   const openFileDialog = () => {
     if (fileInputRef.current) {
@@ -150,7 +154,7 @@ export function Dashboard() {
           <GDEconomyCard gdEconomy={gdEconomy} />
         </div>
         <div className="flex flex-col 2xl:flex-row gap-4">
-          <CompensatedEnergy />
+          <CompensatedEnergy consumedEnergyAndCompensatedEnergy={consumedEnergyAndCompensatedEnergy} />
           <FinancialResults economyWithGDValuesPerMonth={economyWithGDValuesPerMonth} />
           <InvoicesComposition />
         </div>

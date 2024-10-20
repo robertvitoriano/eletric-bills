@@ -19,17 +19,17 @@ class GetStatisticsController {
         totalCostWithoutGDEnergy,
         gdEconomy,
         economyWithGDValuesPerMonth,
+        consumedEnergyAndCompensatedEnergy,
       } = await getStatisticsUseCase.execute({});
 
-      return response
-        .status(HttpStatusCode.Ok)
-        .send({
-          consumptionOfElectricEnergy,
-          compensatedEnergy,
-          totalCostWithoutGDEnergy,
-          gdEconomy,
-          economyWithGDValuesPerMonth,
-        });
+      return response.status(HttpStatusCode.Ok).send({
+        consumptionOfElectricEnergy,
+        compensatedEnergy,
+        totalCostWithoutGDEnergy,
+        gdEconomy,
+        economyWithGDValuesPerMonth,
+        consumedEnergyAndCompensatedEnergy,
+      });
     } catch (error) {
       console.error(error);
       return response.status(404).send(error instanceof Error ? error.message : "File not found");

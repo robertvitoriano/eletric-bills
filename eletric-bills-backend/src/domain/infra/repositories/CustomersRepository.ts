@@ -27,7 +27,6 @@ class CustomersRepository implements ICustomersRepository {
     const total = await queryBuilder.getCount();
     return total;
   }
-  economyWithGDValuesPerMonth: Array<{ month: string; totalWithoutGD: number; economyWithGD: number }>;
   async list(data?: { page?: number; perPage?: number; name?: string; year?: number; customerId?: string }) {
     const { page = 1, year, customerId, perPage = 10, name } = data;
     const offset = (page - 1) * perPage || 0;

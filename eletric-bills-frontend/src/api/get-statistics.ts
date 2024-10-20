@@ -18,6 +18,7 @@ export async function getStatistics(
   totalCostWithoutGDEnergy;
   gdEconomy;
   economyWithGDValuesPerMonth: Array<{ month: string; totalWithoutGD: number; economyWithGD: number }>;
+  consumedEnergyAndCompensatedEnergy: Array<{ month: string; consumedEnergy: number; compensatedEnergy: number }>;
 }> {
   const response = await api.get<{
     consumptionOfElectricEnergy;
@@ -25,6 +26,7 @@ export async function getStatistics(
     totalCostWithoutGDEnergy;
     gdEconomy;
     economyWithGDValuesPerMonth;
+    consumedEnergyAndCompensatedEnergy;
   }>("/invoices/statistics", {
     params: queryParams,
   });
