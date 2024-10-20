@@ -82,11 +82,11 @@ export function Invoices() {
                 <TableCell className="text-center">{installationNumber}</TableCell>
                 <TableCell className="text-center">{customerNumber}</TableCell>
 
-                {invoices.map(({ id, reference }) => {
-                  const doesInvoiceExist = months.some((month) => month.code === reference.split("/")[0]);
-                  if (doesInvoiceExist) {
+                {months.map((month) => {
+                  const invoice = invoices.find(({ reference }) => month.code === reference.split("/")[0]);
+                  if (invoice) {
                     return (
-                      <TableCell key={id}>
+                      <TableCell key={invoice.id}>
                         <div className="flex justify-center gap-2">
                           <div className={classNames("flex flex-col gap-2")}>
                             <div
@@ -110,16 +110,13 @@ export function Invoices() {
                     );
                   }
                   return (
-                    <TableCell key={id}>
+                    <TableCell key={month.code}>
                       <div className="flex justify-center gap-2">
                         <div className={classNames("flex flex-col gap-2")}>
                           <div
                             className={classNames(
                               "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
-                              "flex-col relative",
-                              {
-                                "hover:bg-white hover:text-primary cursor-pointer": doesInvoiceExist,
-                              }
+                              "flex-col relative"
                             )}
                           >
                             <img src={pdfIconDisabled} className="h-10" />
