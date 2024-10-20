@@ -8,7 +8,7 @@ const invoicesRouter = Router();
 const createInvoiceController = new CreateInvoiceController();
 const invoiceDownloadController = new InvoiceDownloadController();
 const upload = multer(uploadConfig.upload("./tmp/"));
-invoicesRouter.post("/", upload.fields([{ name: "invoice" }]), createInvoiceController.handle);
+invoicesRouter.post("/", upload.fields([{ name: "invoices" }]), createInvoiceController.handle);
 invoicesRouter.get("/download/:invoiceId", invoiceDownloadController.handle);
 
 export { invoicesRouter };

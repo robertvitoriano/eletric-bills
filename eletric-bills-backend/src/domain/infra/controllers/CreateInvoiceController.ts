@@ -9,17 +9,17 @@ class CreateInvoiceController {
       const createInvoiceUseCase = new CreateInvoicesUseCase();
 
       const invoiceFiles = files as {
-        invoice?: Express.Multer.File[];
+        invoices?: Express.Multer.File[];
       };
 
-      if (!invoiceFiles || !invoiceFiles.invoice || invoiceFiles.invoice.length === 0) {
+      if (!invoiceFiles || !invoiceFiles.invoices || invoiceFiles.invoices.length === 0) {
         return response.status(HttpStatusCode.BadRequest).json({
           message: "No invoice files provided",
         });
       }
 
-      for (let i = 0; i < invoiceFiles.invoice.length; i++) {
-        await createInvoiceUseCase.execute(invoiceFiles.invoice[i]);
+      for (let i = 0; i < invoiceFiles.invoices.length; i++) {
+        await createInvoiceUseCase.execute(invoiceFiles.invoices[i]);
       }
 
       return response.status(HttpStatusCode.Ok).json({

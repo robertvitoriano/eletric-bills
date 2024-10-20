@@ -8,12 +8,13 @@ import { DrawerDialog } from "@/components/DrawerDialog";
 import { FileUp } from "lucide-react";
 import { useState, useRef } from "react";
 import { uploadNewInvoice } from "@/api/upload-new-invoice";
-
+import { Spinner } from "@/components/Spinner";
+import { toast } from "sonner";
 export function Dashboard() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [filesSelected, setFilesSelected] = useState<File[]>([]);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const openFileDialog = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -48,10 +49,17 @@ export function Dashboard() {
   };
 
   async function handleInvoiceFileUpload() {
+    setLoading(true);
     if (filesSelected.length > 0) {
       try {
-        uploadNewInvoice(filesSelected);
+        await uploadNewInvoice(filesSelected);
+        setLoading(false);
+        setFilesSelected([]);
+        toast("As faturas foram processadas");
       } catch (e) {
+        toast("Erro ao processar as faturas");
+        setLoading(false);
+        setFilesSelected([]);
         console.error(e);
       }
     }
@@ -59,6 +67,8 @@ export function Dashboard() {
 
   return (
     <>
+      {loading && <Spinner />}
+
       <div className="flex flex-col gap-4 text-white p-4">
         <div className="flex justify-between">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
