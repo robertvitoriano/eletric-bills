@@ -30,8 +30,8 @@ export const CompensatedEnergy = ({ consumedEnergyAndCompensatedEnergy }: Props)
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="consumedEnergy" fill="#8884d8" />
-              <Bar dataKey="compensatedEnergy" fill="#82ca9d" />
+              <Bar dataKey="consumedEnergy" name="Energia Consumida" fill="#8884d8" />
+              <Bar dataKey="compensatedEnergy" name="Energia Compensada" fill="#82ca9d" />
             </BarChart>
           </div>
         </ResponsiveContainer>

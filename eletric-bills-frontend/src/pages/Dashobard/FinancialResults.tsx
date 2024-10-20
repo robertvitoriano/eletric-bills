@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
 import { XAxis, CartesianGrid, Tooltip, YAxis, BarChart, Bar, Legend } from "recharts";
+
 interface Props {
   economyWithGDValuesPerMonth: Array<{ month: string; totalWithoutGD: number; economyWithGD: number }>;
 }
+
 export const FinancialResults = ({ economyWithGDValuesPerMonth }: Props) => {
   return (
     <Card className="w-full 2xl:w-fit bg-primary text-white">
@@ -27,8 +29,8 @@ export const FinancialResults = ({ economyWithGDValuesPerMonth }: Props) => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="totalWithoutGD" fill="#ff7300" />
-            <Bar dataKey="economyWithGD" fill="#387908" />
+            <Bar dataKey="totalWithoutGD" name="Total sem GD" fill="#ff7300" />
+            <Bar dataKey="economyWithGD" name="Economia com GD" fill="#387908" />
           </BarChart>
         </div>
       </CardContent>
