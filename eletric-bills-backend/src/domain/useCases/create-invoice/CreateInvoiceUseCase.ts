@@ -1,5 +1,4 @@
 import { container } from "tsyringe";
-import { deleteFile } from "../../../utils/file";
 import { CustomerService } from "./services/CustomerService";
 import { EletricityInvoiceParser } from "./services/EletricityInvoiceParserService";
 import { InvoiceService } from "./services/InvoiceService";
@@ -20,8 +19,9 @@ class CreateInvoicesUseCase {
         customerId,
         invoiceUrl: url || path,
       });
+
       if (url) {
-        await deleteFile(path);
+        await FileManager.deleteFile(path);
       }
     }
   }
