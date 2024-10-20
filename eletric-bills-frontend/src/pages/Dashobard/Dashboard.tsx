@@ -50,7 +50,6 @@ export function Dashboard() {
   };
 
   async function handleInvoiceFileUpload() {
-    console.log("Trying to upload");
     if (newFileToBeUploaded) {
       try {
         await uploadNewInvoice(newFileToBeUploaded);

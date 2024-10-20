@@ -42,9 +42,7 @@ export function Invoices() {
     updateUrlQueryParam(year);
   }
 
-  function handleInvoiceDownload(invoice) {
-    console.log(invoice);
-  }
+  function handleInvoiceDownload(invoice) {}
 
   return (
     <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white p-4">
@@ -118,36 +116,45 @@ export function Invoices() {
                           </TableCell>
                         }
                         content={
-                          <div className="flex flex-col gap-6">
+                          <div className="flex flex-col  p-4  gap-6 overflow-y-auto overflow-x-hidden h-[400px]">
                             <div className="text-center font-bold text-lg mb-4 text-white">
                               Fatura: {invoice.reference}
                             </div>
 
-                            <div className="flex flex-wrap gap-6 justify-between w-full">
+                            <div className="flex flex-wrap gap-4 justify-between w-full">
                               <div className="flex-1 min-w-[250px]">
-                                <h3 className="font-bold text-md mb-2">Detalhes da Fatura:</h3>
+                                <h3 className="font-bold text-md mb-2 text-white">Detalhes da Fatura:</h3>
                                 <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                                  <p>
-                                    <strong>Data de Vencimento:</strong>{" "}
-                                    {new Date(invoice.due_date).toLocaleDateString()}
-                                  </p>
-                                  <p>
-                                    <strong>Leitura Anterior:</strong>{" "}
-                                    {new Date(invoice.previous_reading).toLocaleDateString()}
-                                  </p>
-                                  <p>
-                                    <strong>Leitura Atual:</strong>{" "}
-                                    {new Date(invoice.current_reading).toLocaleDateString()}
-                                  </p>
-                                  <p>
-                                    <strong>Total:</strong> R$ {invoice.total_amount}
-                                  </p>
-                                  <p>
-                                    <strong>Código de Barras:</strong> {invoice.bar_code_number}
+                                  <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <p>
+                                      <strong>Data de Vencimento:</strong>
+                                      <br />
+                                      {new Date(invoice.due_date).toLocaleDateString()}
+                                    </p>
+                                    <p>
+                                      <strong>Leitura Anterior:</strong>
+                                      <br />
+                                      {new Date(invoice.previous_reading).toLocaleDateString()}
+                                    </p>
+                                    <p>
+                                      <strong>Leitura Atual:</strong>
+                                      <br />
+                                      {new Date(invoice.current_reading).toLocaleDateString()}
+                                    </p>
+                                    <p>
+                                      <strong>Total:</strong>
+                                      <br />
+                                      R$ {invoice.total_amount}
+                                    </p>
+                                  </div>
+                                  <p className="mt-2">
+                                    <strong>Código de Barras:</strong>
+                                    <br />
+                                    {invoice.bar_code_number}
                                   </p>
                                   <a
                                     href={invoice.url}
-                                    className="text-blue-600 underline"
+                                    className="text-blue-600 underline mt-2 block"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >
@@ -156,7 +163,7 @@ export function Invoices() {
                                 </div>
                               </div>
 
-                              <div className="flex-1 min-w-[350px] p-4 h-40 overflow-y-auto">
+                              <div className="flex-1 min-w-[350px] p-4">
                                 <h3 className="font-bold text-md mb-2 text-white">Itens da Fatura:</h3>
                                 <div className="bg-gray-50 p-4 rounded-lg shadow-md">
                                   {invoice.invoice_items.map((item: InvoiceItem) => (

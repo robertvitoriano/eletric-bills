@@ -108,7 +108,6 @@ export class EletricityInvoiceParser {
     );
     const quantity = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 1].replace(".", ""));
     const cost = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 3].replace(",", "."));
-
     return { quantity, cost };
   }
   private getDamageCompensations(): number {
