@@ -58,8 +58,9 @@ export async function getCustomersWithInvoices(
   queryParams: {
     page?: number;
     year?: number;
-    customerNumber?: string;
-    installationNumber?: string;
+    customer_number?: string;
+    installation_number?: string;
+    per_page?: number;
   } = {}
 ): Promise<CustomersResponse> {
   const response = await api.get<CustomersResponse>("/customers", {

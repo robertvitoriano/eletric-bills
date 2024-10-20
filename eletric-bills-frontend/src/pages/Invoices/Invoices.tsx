@@ -22,7 +22,7 @@ export function Invoices() {
   const [pagination, setPagination] = useState<IPagination>({ pagesTotal: 1, currentPage: 1, total: 1, perPage: 1 });
   useEffect(() => {
     loadData();
-  }, []);
+  }, [selectedYear, pagination.currentPage]);
 
   async function loadData() {
     const params = new URLSearchParams(window.location.search);
@@ -32,7 +32,12 @@ export function Invoices() {
     if (!isNaN(yearFromQuery)) {
       setSelectedYear(yearFromQuery);
     }
-    const customersResponse = await getCustomersWithInvoices();
+    const customersResponse = await getCustomersWithInvoices({
+      per_page: 1,
+      page: pagination.currentPage,
+      customer_number: "",
+      installation_number: "",
+    });
 
     setCustomers(customersResponse.customers);
     setYears(customersResponse.availableYears as number[]);
@@ -48,7 +53,11 @@ export function Invoices() {
   function handleSelectedYear(year: number) {
     setSelectedYear(year);
     updateUrlQueryParam(year);
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   }
+  const handlePageChange = (newPage: number) => {
+    setPagination((prev) => ({ ...prev, currentPage: newPage }));
+  };
 
   function handleInvoiceDownload(invoice: Invoice) {
     fetch(invoice.url)
@@ -257,9 +266,10 @@ export function Invoices() {
         </Table>
         <div className="p-4 rounded-lg bg-transparent text-white">
           <Pagination
-            pageIndex={pagination.currentPage - 1}
+            pageIndex={pagination.currentPage}
             perPage={pagination.perPage}
             totalCount={pagination.total}
+            onPageChange={handlePageChange}
           />
         </div>
       </div>
