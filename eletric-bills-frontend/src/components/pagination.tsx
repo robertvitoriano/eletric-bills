@@ -13,7 +13,6 @@ export const Pagination = (props: PaginationProps) => {
   const totalPages = Math.ceil(totalCount / perPage) || 1;
 
   const handlePageChange = (newPageIndex: number) => {
-    console.log("Trying to change page");
     if (newPageIndex >= 0) {
       onPageChange(newPageIndex);
     }

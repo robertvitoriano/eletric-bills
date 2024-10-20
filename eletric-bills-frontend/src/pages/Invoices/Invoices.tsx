@@ -21,23 +21,31 @@ export function Invoices() {
   const [selectedYear, setSelectedYear] = useState<number>();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [pagination, setPagination] = useState<IPagination>({ pagesTotal: 1, currentPage: 1, total: 1, perPage: 1 });
+  const [name, setName] = useState<string>("");
+  const [customerNumber, setCustomerNumber] = useState<string>("");
+  const [installationNumber, setInstallationNumber] = useState<string>("");
+
   useEffect(() => {
     loadData();
-  }, [selectedYear, pagination.currentPage]);
+  }, [selectedYear, pagination.currentPage, name, customerNumber, installationNumber]);
 
   async function loadData() {
     const params = new URLSearchParams(window.location.search);
 
     const yearFromQuery = Number(params.get("year"));
+    const nameFromQuery = params.get("name") || "";
+    const customerNumberFromQuery = params.get("customer_number") || "";
+    const installationNumberFromQuery = params.get("installation_number") || "";
 
     if (!isNaN(yearFromQuery)) {
       setSelectedYear(yearFromQuery);
     }
     const customersResponse = await getCustomersWithInvoices({
-      per_page: 1,
+      per_page: 10,
       page: pagination.currentPage,
-      customer_number: "",
-      installation_number: "",
+      customer_number: customerNumberFromQuery,
+      installation_number: installationNumberFromQuery,
+      name: nameFromQuery,
     });
 
     setCustomers(customersResponse.customers);
@@ -45,17 +53,21 @@ export function Invoices() {
     setPagination(customersResponse.pagination);
   }
 
-  function updateUrlQueryParam(year: number) {
+  function updateUrlQueryParams() {
     const params = new URLSearchParams(window.location.search);
-    params.set("year", year.toString());
+    if (selectedYear) params.set("year", selectedYear.toString());
+    if (name) params.set("name", name);
+    if (customerNumber) params.set("customer_number", customerNumber);
+    if (installationNumber) params.set("installation_number", installationNumber);
+
     window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
   }
 
-  function handleSelectedYear(year: number) {
-    setSelectedYear(year);
-    updateUrlQueryParam(year);
+  async function handleFilterChange() {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
+    updateUrlQueryParams();
   }
+
   const handlePageChange = (newPage: number) => {
     setPagination((prev) => ({ ...prev, currentPage: newPage }));
   };
@@ -72,7 +84,6 @@ export function Invoices() {
         downloadFileFromBlob(blob, invoice);
       } else {
         const blob = await downloadInvoice(invoice.id);
-        console.log({ blob });
         downloadFileFromBlob(blob, invoice);
       }
     } catch (error) {
@@ -95,6 +106,32 @@ export function Invoices() {
 
   return (
     <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white p-4">
+      <div className="flex gap-4 p-4 text-black">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Nome"
+          className="p-2 rounded-xl"
+        />
+        <input
+          type="text"
+          value={customerNumber}
+          onChange={(e) => setCustomerNumber(e.target.value)}
+          placeholder="Nº do Cliente"
+          className="p-2 rounded-xl"
+        />
+        <input
+          type="text"
+          value={installationNumber}
+          onChange={(e) => setInstallationNumber(e.target.value)}
+          placeholder="Nº de Instalação"
+          className="p-2 rounded-xl"
+        />
+        <button onClick={handleFilterChange} className="bg-primary p-2 text-white rounded-xl">
+          Filtrar
+        </button>
+      </div>
       <div className="flex gap-4 p-4">
         {years.map((year) => (
           <div
@@ -105,7 +142,7 @@ export function Invoices() {
                 "bg-white text-primary": selectedYear === year ? year : year,
               }
             )}
-            onClick={() => handleSelectedYear(year)}
+            onClick={() => setSelectedYear(year)}
           >
             {year}
           </div>
