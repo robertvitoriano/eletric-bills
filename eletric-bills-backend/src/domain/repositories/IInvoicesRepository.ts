@@ -5,6 +5,7 @@ interface IInvoicesRepository {
   store(invoiceData: Omit<Invoice, "id" | "invoice_items" | "customer">): Promise<Invoice>;
   findOne(id: Partial<Invoice>): Promise<Invoice | null>;
   storeItem(invoiceData: Omit<InvoiceItem, "id" | "invoice" | "invoiceItemType">): Promise<InvoiceItem>;
+  getAvailableYears(): Promise<number[]>;
 }
 
 export { IInvoicesRepository };

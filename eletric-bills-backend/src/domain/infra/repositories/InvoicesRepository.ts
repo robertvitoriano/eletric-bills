@@ -7,11 +7,9 @@ import { Customer } from "../../entities/Customer";
 class InvoicesRepository implements IInvoicesRepository {
   private invoiceRepository: Repository<Invoice>;
   private invoiceItemRepository: Repository<InvoiceItem>;
-  private customerRepository: Repository<Customer>;
   constructor() {
     this.invoiceRepository = PostgresDataSource.getRepository(Invoice);
     this.invoiceItemRepository = PostgresDataSource.getRepository(InvoiceItem);
-    this.customerRepository = PostgresDataSource.getRepository(Customer);
   }
 
   async storeItem(invoiceData: Omit<InvoiceItem, "id" | "invoice" | "invoiceItemType">): Promise<InvoiceItem> {
@@ -27,6 +25,20 @@ class InvoicesRepository implements IInvoicesRepository {
     return invoice;
   }
 
+  async getAvailableYears(customerId?: string): Promise<number[]> {
+    const queryBuilder = this.invoiceRepository
+      .createQueryBuilder("invoice")
+      .select("DISTINCT EXTRACT(YEAR FROM invoice.due_date)", "year")
+      .orderBy("year", "ASC");
+
+    if (customerId) {
+      queryBuilder.where("invoice.customer_id = :customerId", { customerId });
+    }
+    const result = await queryBuilder.getRawMany();
+    const years = result.map((row: { year: string }) => Number(row.year));
+
+    return years;
+  }
   async store(invoiceData: Omit<Invoice, "id" | "invoice_items" | "customer">): Promise<Invoice> {
     const invoice = this.invoiceRepository.create(invoiceData);
     const storedInvoice = await this.invoiceRepository.save(invoice);

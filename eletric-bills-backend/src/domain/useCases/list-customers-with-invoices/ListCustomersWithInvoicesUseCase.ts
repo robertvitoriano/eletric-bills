@@ -1,9 +1,14 @@
 import { inject, injectable } from "tsyringe";
 import { ICustomersRepository } from "../../repositories/ICustomersRepository";
+import { IInvoicesRepository } from "../../repositories/IInvoicesRepository";
 
 @injectable()
 export class ListCustomersWithInvoicesUseCase {
-  constructor(@inject("CustomersRepository") private customersReposirory: ICustomersRepository) {}
+  constructor(
+    @inject("CustomersRepository") private customersReposirory: ICustomersRepository,
+    @inject("InvoicesRepository")
+    private invoicesRepository: IInvoicesRepository
+  ) {}
   async execute(data: { page?: number; year?: number; customerNumber?: string; name: string }): Promise<any> {
     const { customerNumber, page, year } = data;
 
@@ -13,8 +18,17 @@ export class ListCustomersWithInvoicesUseCase {
       customerId = id;
     }
 
-    const invoices = this.customersReposirory.list({ page: Number(page), year, customerId: customerId });
-
-    return invoices;
+    const customers = await this.customersReposirory.list({ page: Number(page), year, customerId: customerId });
+    const total = await this.customersReposirory.getTotal({ year, customerId: customerId });
+    const availableYears = await this.invoicesRepository.getAvailableYears();
+    return {
+      customers,
+      availableYears,
+      pagination: {
+        currentPage: page || 1,
+        total,
+        pageTotal: customers.length,
+      },
+    };
   }
 }
