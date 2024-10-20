@@ -10,10 +10,10 @@ import { useState, useRef } from "react";
 import { uploadNewInvoice } from "@/api/upload-new-invoice";
 
 export function Dashboard() {
-  const [fileSelected, setFileSelected] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [newFileToBeUploaded, setNewFileToBeUploaded] = useState();
+  const [filesSelected, setFilesSelected] = useState<File[]>([]);
+
   const openFileDialog = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -21,10 +21,9 @@ export function Dashboard() {
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      setNewFileToBeUploaded(file as any);
-      setFileSelected(true);
+    if (event.target.files) {
+      const selectedFiles = Array.from(event.target.files);
+      setFilesSelected((prevFiles) => [...prevFiles, ...selectedFiles]);
       setIsDragging(false);
     }
   };
@@ -42,22 +41,22 @@ export function Dashboard() {
     event.preventDefault();
     setIsDragging(false);
 
-    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      const file = event.dataTransfer.files[0];
-      setNewFileToBeUploaded(file as any);
-      setFileSelected(true);
+    if (event.dataTransfer.files) {
+      const droppedFiles = Array.from(event.dataTransfer.files);
+      setFilesSelected((prevFiles) => [...prevFiles, ...droppedFiles]);
     }
   };
 
   async function handleInvoiceFileUpload() {
-    if (newFileToBeUploaded) {
+    if (filesSelected.length > 0) {
       try {
-        await uploadNewInvoice(newFileToBeUploaded);
+        uploadNewInvoice(filesSelected);
       } catch (e) {
         console.error(e);
       }
     }
   }
+
   return (
     <>
       <div className="flex flex-col gap-4 text-white p-4">
@@ -65,11 +64,11 @@ export function Dashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <DrawerDialog
             title="Processar nova fatura"
-            dialogDescription="Clique abaixo para selecionar ou arraste a nova fatura que deseja processar"
-            drawerDescription="Clique abaixo para selecionar uma nova fatura"
+            dialogDescription="Clique abaixo para selecionar ou arraste os arquivos que deseja processar"
+            drawerDescription="Clique abaixo para selecionar novas faturas"
             trigger={
               <div className="text-white bg-emerald-500 p-4 cursor-pointer font-bold w-fit rounded-md">
-                Processar nova Fatura
+                Processar novas Faturas
               </div>
             }
             content={
@@ -85,13 +84,22 @@ export function Dashboard() {
                     <div className="absolute w-80 h-80 bg-transparent border-2 border-gray-500 rounded-xl" />
                     <div className="absolute w-32 h-32 bg-gray-500 opacity-20 rounded-full" />
                     {!isDragging && <FileUp className="w-16 h-16 text-emerald-500 z-10" />}
-                    {isDragging && <span className="font-bold text-2xl text-white">Solte a fatura!</span>}
+                    {isDragging && <span className="font-bold text-2xl text-white">Solte os arquivos!</span>}
                   </div>
 
-                  <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
+                  <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileSelect} />
                 </div>
+
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  {filesSelected.map((file, index) => (
+                    <div key={index} className="p-2 bg-gray-700 text-white rounded-md text-sm">
+                      {file.name}
+                    </div>
+                  ))}
+                </div>
+
                 <div className="my-4">
-                  {fileSelected && (
+                  {filesSelected.length > 0 && (
                     <button
                       className="bg-emerald-500 p-4 text-white font-bold rounded-md"
                       onClick={handleInvoiceFileUpload}
@@ -104,6 +112,7 @@ export function Dashboard() {
             }
           />
         </div>
+
         <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
           <EffectiveTotalCard />
           <TotalWithoutGDCard />
