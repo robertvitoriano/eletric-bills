@@ -7,6 +7,7 @@ import classNames from "classnames";
 import { Pagination } from "@/components/pagination";
 import { getCustomersWithInvoices } from "@/api/get-customers-with-invoices";
 import { months } from "./invoice-mocks";
+import { DrawerDialog } from "@/components/DrawerDialog";
 
 export function Invoices() {
   const [years, setYears] = useState<Array<number>>([]);
@@ -42,6 +43,10 @@ export function Invoices() {
     updateUrlQueryParam(year);
   }
 
+  function handleInvoiceDownload(invoice) {
+    console.log(invoice);
+  }
+
   return (
     <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white p-4">
       <div className="flex gap-4 p-4">
@@ -69,7 +74,7 @@ export function Invoices() {
               <TableHead className="text-center text-white">Nº do Cliente</TableHead>
 
               {months.map(({ month }) => (
-                <TableHead key={month} className="text-center text-white">
+                <TableHead key={month} className="text-center text-white w-[150px]">
                   {month}
                 </TableHead>
               ))}
@@ -86,27 +91,44 @@ export function Invoices() {
                   const invoice = invoices.find(({ reference }) => month.code === reference.split("/")[0]);
                   if (invoice) {
                     return (
-                      <TableCell key={invoice.id}>
-                        <div className="flex justify-center gap-2">
-                          <div className={classNames("flex flex-col gap-2")}>
-                            <div
-                              className={classNames(
-                                "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
-                                "flex-col relative hover:bg-white hover:text-primary cursor-pointer"
-                              )}
-                            >
-                              <img src={pdfIcon} className="h-10" />
-                              <div
-                                className={classNames(
-                                  "opacity-0 flex items-center justify-center h-12 w-10 absolute hover:opacity-100"
-                                )}
-                              >
-                                <Eye />
+                      <DrawerDialog
+                        title="Visualizar Fatura"
+                        dialogDescription="Clique abaixo para baixar sua fatura"
+                        drawerDescription="Clique abaixo para baixar sua fatura"
+                        trigger={
+                          <TableCell key={invoice.id} className="">
+                            <div className="flex justify-center gap-2">
+                              <div className={classNames("flex flex-col gap-2")}>
+                                <div
+                                  className={classNames(
+                                    "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
+                                    "flex-col relative hover:bg-white hover:text-primary cursor-pointer"
+                                  )}
+                                >
+                                  <img src={pdfIcon} className="h-10" />
+                                  <div
+                                    className={classNames(
+                                      "opacity-0 flex items-center justify-center h-12 w-10 absolute hover:opacity-100"
+                                    )}
+                                  >
+                                    <Eye />
+                                  </div>
+                                </div>
                               </div>
                             </div>
+                          </TableCell>
+                        }
+                        content={
+                          <div className="flex flex-col items-center">
+                            <button
+                              className="bg-emerald-500 p-4 text-white font-bold rounded-md"
+                              onClick={() => handleInvoiceDownload(invoice)}
+                            >
+                              Baixar Fatura
+                            </button>{" "}
                           </div>
-                        </div>
-                      </TableCell>
+                        }
+                      />
                     );
                   }
                   return (
