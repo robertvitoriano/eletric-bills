@@ -74,8 +74,8 @@ export function Invoices() {
               <TableHead className="text-center text-white">Nº do Cliente</TableHead>
 
               {months.map(({ month }) => (
-                <TableHead key={month} className="text-center text-white w-[150px]">
-                  {month}
+                <TableHead key={month} className="text-center text-white">
+                  <div className="w-14">{month}</div>
                 </TableHead>
               ))}
             </TableRow>
@@ -105,7 +105,7 @@ export function Invoices() {
                                     "flex-col relative hover:bg-white hover:text-primary cursor-pointer"
                                   )}
                                 >
-                                  <img src={pdfIcon} className="h-10" />
+                                  <img src={pdfIcon} className="h-10 mi-w-10" />
                                   <div
                                     className={classNames(
                                       "opacity-0 flex items-center justify-center h-12 w-10 absolute hover:opacity-100"
