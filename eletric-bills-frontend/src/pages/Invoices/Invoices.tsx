@@ -12,8 +12,9 @@ import {
   InvoiceItem,
   Pagination as IPagination,
 } from "@/api/get-customers-with-invoices";
-import { months } from "./invoice-mocks";
 import { DrawerDialog } from "@/components/DrawerDialog";
+import { downloadInvoice } from "@/api/download-invoice";
+import { months } from "@/lib/utils";
 
 export function Invoices() {
   const [years, setYears] = useState<Array<number>>([]);
@@ -59,30 +60,39 @@ export function Invoices() {
     setPagination((prev) => ({ ...prev, currentPage: newPage }));
   };
 
-  function handleInvoiceDownload(invoice: Invoice) {
-    fetch(invoice.url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to download invoice.");
-        }
-        return response.blob();
-      })
-      .then((blob) => {
-        const blobUrl = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = blobUrl;
-        link.setAttribute("download", `Fatura-${invoice.reference}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        window.URL.revokeObjectURL(blobUrl);
-      })
-      .catch((error) => {
-        console.error("Error downloading invoice:", error);
-      });
+  async function handleInvoiceDownload(invoice: Invoice) {
+    try {
+      if (invoice.url.includes("amazonaws")) {
+        const blob = await fetch(invoice.url).then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to download invoice.");
+          }
+          return response.blob();
+        });
+        downloadFileFromBlob(blob, invoice);
+      } else {
+        const blob = await downloadInvoice(invoice.id);
+        console.log({ blob });
+        downloadFileFromBlob(blob, invoice);
+      }
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+    }
   }
+
+  function downloadFileFromBlob(blob: Blob, invoice: Invoice) {
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.setAttribute("download", `Fatura-${invoice.reference}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(blobUrl);
+  }
+
   return (
     <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white p-4">
       <div className="flex gap-4 p-4">
