@@ -42,8 +42,30 @@ export function Invoices() {
     updateUrlQueryParam(year);
   }
 
-  function handleInvoiceDownload(invoice) {}
+  function handleInvoiceDownload(invoice: Invoice) {
+    fetch(invoice.url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to download invoice.");
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const blobUrl = window.URL.createObjectURL(blob);
 
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.setAttribute("download", `Fatura-${invoice.reference}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        window.URL.revokeObjectURL(blobUrl);
+      })
+      .catch((error) => {
+        console.error("Error downloading invoice:", error);
+      });
+  }
   return (
     <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white p-4">
       <div className="flex gap-4 p-4">
@@ -116,75 +138,76 @@ export function Invoices() {
                           </TableCell>
                         }
                         content={
-                          <div className="flex flex-col  p-4  gap-6 overflow-y-auto overflow-x-hidden h-[400px]">
-                            <div className="text-center font-bold text-lg mb-4 text-white">
-                              Fatura: {invoice.reference}
-                            </div>
-
-                            <div className="flex flex-wrap gap-4 justify-between w-full">
-                              <div className="flex-1 min-w-[250px]">
-                                <h3 className="font-bold text-md mb-2 text-white">Detalhes da Fatura:</h3>
-                                <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                                  <div className="grid grid-cols-2 gap-4 mb-4">
-                                    <p>
-                                      <strong>Data de Vencimento:</strong>
-                                      <br />
-                                      {new Date(invoice.due_date).toLocaleDateString()}
-                                    </p>
-                                    <p>
-                                      <strong>Leitura Anterior:</strong>
-                                      <br />
-                                      {new Date(invoice.previous_reading).toLocaleDateString()}
-                                    </p>
-                                    <p>
-                                      <strong>Leitura Atual:</strong>
-                                      <br />
-                                      {new Date(invoice.current_reading).toLocaleDateString()}
-                                    </p>
-                                    <p>
-                                      <strong>Total:</strong>
-                                      <br />
-                                      R$ {invoice.total_amount}
-                                    </p>
-                                  </div>
-                                  <p className="mt-2">
-                                    <strong>Código de Barras:</strong>
-                                    <br />
-                                    {invoice.bar_code_number}
-                                  </p>
-                                  <a
-                                    href={invoice.url}
-                                    className="text-blue-600 underline mt-2 block"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    Visualizar PDF
-                                  </a>
-                                </div>
+                          <div>
+                            <div className="flex flex-col  p-4  gap-6 overflow-y-auto overflow-x-hidden h-[400px]">
+                              <div className="text-center font-bold text-lg mb-4 text-white">
+                                Fatura: {invoice.reference}
                               </div>
 
-                              <div className="flex-1 min-w-[350px] p-4">
-                                <h3 className="font-bold text-md mb-2 text-white">Itens da Fatura:</h3>
-                                <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                                  {invoice.invoice_items.map((item: InvoiceItem) => (
-                                    <div key={item.id} className="border-b py-2">
+                              <div className="flex flex-wrap gap-4 justify-between w-full">
+                                <div className="flex-1 min-w-[250px]">
+                                  <h3 className="font-bold text-md mb-2 text-white">Detalhes da Fatura:</h3>
+                                  <div className="bg-gray-50 p-4 rounded-lg shadow-md">
+                                    <div className="grid grid-cols-2 gap-4 mb-4">
                                       <p>
-                                        <strong>Item:</strong> {item.invoiceItemType.type_name}
+                                        <strong>Data de Vencimento:</strong>
+                                        <br />
+                                        {new Date(invoice.due_date).toLocaleDateString()}
                                       </p>
-                                      {item.quantity && (
-                                        <p>
-                                          <strong>Quantidade:</strong> {item.quantity}
-                                        </p>
-                                      )}
                                       <p>
-                                        <strong>Valor Total:</strong> R$ {String(item.total_value).replace(".", ",")}
+                                        <strong>Leitura Anterior:</strong>
+                                        <br />
+                                        {new Date(invoice.previous_reading).toLocaleDateString()}
+                                      </p>
+                                      <p>
+                                        <strong>Leitura Atual:</strong>
+                                        <br />
+                                        {new Date(invoice.current_reading).toLocaleDateString()}
+                                      </p>
+                                      <p>
+                                        <strong>Total:</strong>
+                                        <br />
+                                        R$ {invoice.total_amount}
                                       </p>
                                     </div>
-                                  ))}
+                                    <p className="mt-2">
+                                      <strong>Código de Barras:</strong>
+                                      <br />
+                                      {invoice.bar_code_number}
+                                    </p>
+                                    <a
+                                      href={invoice.url}
+                                      className="text-blue-600 underline mt-2 block"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      Visualizar PDF
+                                    </a>
+                                  </div>
+                                </div>
+
+                                <div className="flex-1 min-w-[350px] p-4">
+                                  <h3 className="font-bold text-md mb-2 text-white">Itens da Fatura:</h3>
+                                  <div className="bg-gray-50 p-4 rounded-lg shadow-md">
+                                    {invoice.invoice_items.map((item: InvoiceItem) => (
+                                      <div key={item.id} className="border-b py-2">
+                                        <p>
+                                          <strong>Item:</strong> {item.invoiceItemType.type_name}
+                                        </p>
+                                        {item.quantity && (
+                                          <p>
+                                            <strong>Quantidade:</strong> {item.quantity}
+                                          </p>
+                                        )}
+                                        <p>
+                                          <strong>Valor Total:</strong> R$ {String(item.total_value).replace(".", ",")}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-
                             <div className="flex justify-center mt-4">
                               <button
                                 className="bg-emerald-500 p-4 text-white font-bold rounded-md"
