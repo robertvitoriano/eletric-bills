@@ -119,13 +119,43 @@ export function Invoices() {
                           </TableCell>
                         }
                         content={
-                          <div className="flex flex-col items-center">
+                          <div className="flex flex-col items-center gap-4">
+                            <div className="text-center font-bold text-lg">Fatura: {invoice.reference}</div>
+                            <div className="text-center">
+                              <p>Data de Vencimento: {new Date(invoice.due_date).toLocaleDateString()}</p>
+                              <p>Leitura Anterior: {new Date(invoice.previous_reading).toLocaleDateString()}</p>
+                              <p>Leitura Atual: {new Date(invoice.current_reading).toLocaleDateString()}</p>
+                              <p>Total: R$ {invoice.total_amount}</p>
+                              <p>Código de Barras: {invoice.bar_code_number}</p>
+                              <a
+                                href={invoice.url}
+                                className="text-blue-600 underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Visualizar PDF
+                              </a>
+                            </div>
+
+                            <div className="w-full">
+                              <h3 className="font-bold text-md mb-2">Itens da Fatura:</h3>
+                              <div className="flex flex-col gap-2">
+                                {invoice.invoice_items.map((item) => (
+                                  <div key={item.id} className="border p-2 rounded-lg shadow-sm bg-gray-100 w-full">
+                                    <p>Tipo de Item: {item.invoice_item_type_id}</p>
+                                    <p>Quantidade: {item.quantity ? item.quantity : "N/A"}</p>
+                                    <p>Valor Total: R$ {item.total_value}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
                             <button
                               className="bg-emerald-500 p-4 text-white font-bold rounded-md"
                               onClick={() => handleInvoiceDownload(invoice)}
                             >
                               Baixar Fatura
-                            </button>{" "}
+                            </button>
                           </div>
                         }
                       />

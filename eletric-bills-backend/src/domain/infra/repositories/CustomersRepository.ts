@@ -32,8 +32,8 @@ class CustomersRepository implements ICustomersRepository {
 
     const queryBuilder = this.customerRepository
       .createQueryBuilder("customer")
-      .leftJoinAndSelect("customer.invoices", "invoice");
-
+      .leftJoinAndSelect("customer.invoices", "invoice")
+      .leftJoinAndSelect("invoice.invoice_items", "invoiceItems");
     if (customerId) {
       queryBuilder.where("customer.id = :customerId", { customerId });
     }
