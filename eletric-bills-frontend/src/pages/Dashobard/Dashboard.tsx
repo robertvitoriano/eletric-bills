@@ -3,7 +3,6 @@ import { ConsumptionOfElectricEnergyCard } from "./ConsumptionOfElectricEnergyCa
 import { TotalCompensationGDCard } from "./TotalCompensatedEnergyGDCard";
 import { CompensatedEnergy } from "./CompensatedEnergy";
 import { FinancialResults } from "./FinancialResults";
-import { InvoicesComposition } from "./InvoicesComposition";
 import { DrawerDialog } from "@/components/DrawerDialog";
 import { FileUp } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -156,7 +155,6 @@ export function Dashboard() {
         <div className="flex flex-col 2xl:flex-row gap-4">
           <CompensatedEnergy consumedEnergyAndCompensatedEnergy={consumedEnergyAndCompensatedEnergy} />
           <FinancialResults economyWithGDValuesPerMonth={economyWithGDValuesPerMonth} />
-          <InvoicesComposition />
         </div>
       </div>
     </>
