@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { HttpStatusCode } from "axios";
-import { ListInvoicesByCustomerUseCase } from "../../useCases/list-invoices-by-customer/ListInvoicesByCustomerUseCase";
+import { ListCustomersWithInvoicesUseCase } from "../../useCases/list-customers-with-invoices/ListCustomersWithInvoicesUseCase";
 
-export class ListInvoicesByCustomerController {
+export class ListCustomersWithInvoicesController {
   async handle(request: Request, response: Response): Promise<Response> {
     try {
       const { page, year, customer_number, name } = request.query;
-      const listInvoicesByCustomerUseCase = container.resolve(ListInvoicesByCustomerUseCase);
-      const invoicesResponse = await listInvoicesByCustomerUseCase.execute({
+      const listCustomersWithInvoicesUseCase = container.resolve(ListCustomersWithInvoicesUseCase);
+      const customersResponse = await listCustomersWithInvoicesUseCase.execute({
         name: name && String(name),
         page: page && Number(page),
         year: year && Number(year),
@@ -16,14 +16,14 @@ export class ListInvoicesByCustomerController {
       });
 
       return response.status(HttpStatusCode.Ok).json({
-        message: "Invoices successfully fetched",
-        invoicesResponse,
+        message: "Customers successfully fetched",
+        customersResponse,
       });
     } catch (error) {
       console.error("Error storing invoice:", error);
 
       return response.status(500).json({
-        message: "An error occurred while fetching invoices",
+        message: "An error occurred while fetching customers",
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }

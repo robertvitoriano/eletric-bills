@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { ListInvoicesByCustomerController } from "../../../../domain/infra/controllers/ListInvoicesByUserController";
+import { ListCustomersWithInvoicesController } from "../../../../domain/infra/controllers/ListCustomersWithInvoicesController";
 
 const customersRouter = Router();
-const listInvoicesByCustomerController = new ListInvoicesByCustomerController();
-customersRouter.get("/", listInvoicesByCustomerController.handle);
+const listCustomersWithInvoicesController = new ListCustomersWithInvoicesController();
+
+customersRouter.get("/", listCustomersWithInvoicesController.handle);
+
 export { customersRouter };

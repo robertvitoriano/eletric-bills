@@ -1,7 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import { ICustomersRepository } from "../../repositories/ICustomersRepository";
+
 @injectable()
-export class ListInvoicesByCustomerUseCase {
+export class ListCustomersWithInvoicesUseCase {
   constructor(@inject("CustomersRepository") private customersReposirory: ICustomersRepository) {}
   async execute(data: { page?: number; year?: number; customerNumber?: string; name: string }): Promise<any> {
     const { customerNumber, page, year } = data;
