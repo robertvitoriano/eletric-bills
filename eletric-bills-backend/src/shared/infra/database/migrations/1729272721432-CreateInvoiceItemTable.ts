@@ -27,9 +27,7 @@ export class CreateInvoiceItemTable1729272721432 implements MigrationInterface {
           },
           {
             name: "quantity",
-            type: "numeric",
-            precision: 10,
-            scale: 3,
+            type: "int",
             isNullable: true,
           },
           {

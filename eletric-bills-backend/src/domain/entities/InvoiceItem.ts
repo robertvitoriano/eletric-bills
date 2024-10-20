@@ -25,7 +25,7 @@ export class InvoiceItem {
   })
   invoiceItemType: InvoiceItemType;
 
-  @Column({ type: "numeric", precision: 10, scale: 3, nullable: true })
+  @Column({ type: "int", nullable: true })
   quantity: number;
 
   @Column({ type: "numeric", precision: 10, scale: 2 })
