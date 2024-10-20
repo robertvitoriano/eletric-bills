@@ -19,8 +19,8 @@ export const FinancialResults = ({ economyWithGDValuesPerMonth }: Props) => {
         <div className="bg-primary rounded-lg shadow p-4 overflow-x-auto">
           <h2 className="text-lg font-semibold mb-4">Resultados Financeiros (R$)</h2>
           <BarChart
-            width={600}
-            height={300}
+            width={800}
+            height={500}
             data={economyWithGDValuesPerMonth}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
