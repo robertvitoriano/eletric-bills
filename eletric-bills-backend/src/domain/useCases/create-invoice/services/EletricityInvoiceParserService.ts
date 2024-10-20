@@ -82,7 +82,9 @@ export class EletricityInvoiceParser {
       this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ElétricakWh") + 1]
     );
     const cost = Number(
-      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ElétricakWh") + 3].replace(",", ".")
+      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ElétricakWh") + 3]
+        .replace(".", "")
+        .replace(",", ".")
     );
     return { quantity, cost };
   }
@@ -94,7 +96,9 @@ export class EletricityInvoiceParser {
       this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 1].replace(".", "")
     );
     const cost = Number(
-      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 3].replace(",", ".")
+      this.sectionsTrimmed[this.sectionsTrimmed.findIndex((section) => section === "ICMSkWh") + 3]
+        .replace(".", "")
+        .replace(",", ".")
     );
 
     return { quantity, cost };
@@ -107,7 +111,7 @@ export class EletricityInvoiceParser {
       (section, index) => section === "IkWh" && this.sectionsTrimmed[index - 1] === "GD"
     );
     const quantity = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 1].replace(".", ""));
-    const cost = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 3].replace(",", "."));
+    const cost = Number(this.sectionsTrimmed[gdReferenceChunkIndex + 3].replace(".", "").replace(",", "."));
     return { quantity, cost };
   }
   private getDamageCompensations(): number {
@@ -147,7 +151,10 @@ export class EletricityInvoiceParser {
 
     if (totalCostReferenceChunkIndex > 1) {
       return Number(
-        this.sectionsTrimmed[totalCostReferenceChunkIndex + 1].replace("\nHistórico", "").replace(",", ".")
+        this.sectionsTrimmed[totalCostReferenceChunkIndex + 1]
+          .replace("\nHistórico", "")
+          .replace(".", "")
+          .replace(",", ".")
       );
     }
   }

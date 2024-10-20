@@ -70,6 +70,7 @@ export function Dashboard() {
     if (filesSelected.length > 0) {
       try {
         await uploadNewInvoice(filesSelected);
+        await loadStatistics();
         setLoading(false);
         setFilesSelected([]);
         toast("As faturas foram processadas");
@@ -85,7 +86,7 @@ export function Dashboard() {
   return (
     <>
       <div className="flex flex-col gap-4 text-white p-4">
-        <div className="flex flex-col  flex:row gap-4 items-center md:justify-between">
+        <div className="flex flex-col gap-4 items-center sm:flex-row sm:justify-between">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <DrawerDialog
             title="Processar nova fatura"
