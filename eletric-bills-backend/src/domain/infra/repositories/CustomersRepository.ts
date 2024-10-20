@@ -46,7 +46,11 @@ class CustomersRepository implements ICustomersRepository {
 
     const customers = await queryBuilder.getMany();
 
-    return customers;
+    return customers.map((customer) => ({
+      ...customer,
+      installationNumber: customer["installation_number"],
+      customerNumber: customer["customer_number"],
+    }));
   }
   async store(customerData: Omit<Customer, "id" | "consumptions" | "invoices">): Promise<Customer> {
     const customer = this.customerRepository.create(customerData);

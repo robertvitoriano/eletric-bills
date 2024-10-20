@@ -4,40 +4,42 @@ import pdfIcon from "./../../assets/pdf_icon.png";
 import pdfIconDisabled from "./../../assets/pdf_icon_disabled.png";
 import { Eye } from "lucide-react";
 import classNames from "classnames";
-import { mockYears, YearData } from "./invoice-mocks";
 import { Pagination } from "@/components/pagination";
 import { getCustomersWithInvoices } from "@/api/get-customers-with-invoices";
+import { months } from "./invoice-mocks";
 
 export function Invoices() {
-  const [years] = useState<Array<YearData>>(mockYears);
-  const [selectedYear, setSelectedYear] = useState<YearData>();
+  const [years, setYears] = useState<Array<number>>([]);
+  const [selectedYear, setSelectedYear] = useState<number>();
   const [customers, setCustomers] = useState<any>([]);
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const yearFromQuery = params.get("year");
-    if (yearFromQuery) {
-      const year = years.find((y) => y.year.toString() === yearFromQuery);
-      if (year) setSelectedYear(year);
-    } else {
-      setSelectedYear(years[0]);
-    }
     loadData();
-  }, [years]);
+  }, []);
 
   async function loadData() {
+    const params = new URLSearchParams(window.location.search);
+
+    const yearFromQuery = Number(params.get("year"));
+
+    if (!isNaN(yearFromQuery)) {
+      setSelectedYear(yearFromQuery);
+    }
     const customersResponse = await getCustomersWithInvoices();
+
     setCustomers(customersResponse.customers);
+    setYears(customersResponse.availableYears as number[]);
+    console.log(customers);
   }
 
-  function updateUrlQueryParam(year: string) {
+  function updateUrlQueryParam(year: number) {
     const params = new URLSearchParams(window.location.search);
-    params.set("year", year);
+    params.set("year", year.toString());
     window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
   }
 
-  function handleSelectedYear(year: YearData) {
+  function handleSelectedYear(year: number) {
     setSelectedYear(year);
-    updateUrlQueryParam(year.year.toString());
+    updateUrlQueryParam(year);
   }
 
   return (
@@ -45,16 +47,16 @@ export function Invoices() {
       <div className="flex gap-4 p-4">
         {years.map((year) => (
           <div
-            key={year.year}
+            key={year}
             className={classNames(
               "bg-primary p-2 md:p-4 text-bold rounded-xl cursor-pointer hover:bg-white hover:text-primary",
               {
-                "bg-white text-primary": selectedYear?.year === year?.year,
+                "bg-white text-primary": selectedYear === year ? year : year,
               }
             )}
             onClick={() => handleSelectedYear(year)}
           >
-            {year.year}
+            {year}
           </div>
         ))}
       </div>
@@ -63,8 +65,10 @@ export function Invoices() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px] text-center text-white">Nome</TableHead>
-              <TableHead className="text-center text-white">Número de Instalação</TableHead>
-              {selectedYear?.customers[0].invoices.map(({ month }) => (
+              <TableHead className="text-center text-white">Nº de Instalação</TableHead>
+              <TableHead className="text-center text-white">Nº do Cliente</TableHead>
+
+              {months.map(({ month }) => (
                 <TableHead key={month} className="text-center text-white">
                   {month}
                 </TableHead>
@@ -72,36 +76,64 @@ export function Invoices() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map(({ instalationNumber, name, invoices }) => (
-              <TableRow key={instalationNumber}>
+            {customers.map(({ installationNumber, customerNumber, name, invoices }) => (
+              <TableRow key={installationNumber}>
                 <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
-                <TableCell className="text-center">{instalationNumber}</TableCell>
-                {invoices.map(({ month, active }) => (
-                  <TableCell key={month}>
-                    <div className="flex justify-center gap-2">
-                      <div className={classNames("flex flex-col gap-2")}>
-                        <div
-                          className={classNames(
-                            "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
-                            "flex-col relative",
-                            {
-                              "hover:bg-white hover:text-primary cursor-pointer": active,
-                            }
-                          )}
-                        >
-                          <img src={active ? pdfIcon : pdfIconDisabled} className="h-10" />
+                <TableCell className="text-center">{installationNumber}</TableCell>
+                <TableCell className="text-center">{customerNumber}</TableCell>
+
+                {invoices.map(({ id, reference }) => {
+                  const doesInvoiceExist = months.some((month) => month.code === reference.split("/")[0]);
+                  if (doesInvoiceExist) {
+                    return (
+                      <TableCell key={id}>
+                        <div className="flex justify-center gap-2">
+                          <div className={classNames("flex flex-col gap-2")}>
+                            <div
+                              className={classNames(
+                                "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
+                                "flex-col relative hover:bg-white hover:text-primary cursor-pointer"
+                              )}
+                            >
+                              <img src={pdfIcon} className="h-10" />
+                              <div
+                                className={classNames(
+                                  "opacity-0 flex items-center justify-center h-12 w-10 absolute hover:opacity-100"
+                                )}
+                              >
+                                <Eye />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                    );
+                  }
+                  return (
+                    <TableCell key={id}>
+                      <div className="flex justify-center gap-2">
+                        <div className={classNames("flex flex-col gap-2")}>
                           <div
-                            className={classNames("opacity-0 flex items-center justify-center h-12 w-10 absolute", {
-                              "hover:opacity-100": active,
-                            })}
+                            className={classNames(
+                              "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
+                              "flex-col relative",
+                              {
+                                "hover:bg-white hover:text-primary cursor-pointer": doesInvoiceExist,
+                              }
+                            )}
                           >
-                            <Eye />
+                            <img src={pdfIconDisabled} className="h-10" />
+                            <div
+                              className={classNames("opacity-0 flex items-center justify-center h-12 w-10 absolute")}
+                            >
+                              <Eye />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </TableCell>
-                ))}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))}
           </TableBody>

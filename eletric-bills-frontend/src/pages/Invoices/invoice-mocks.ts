@@ -1,6 +1,6 @@
 export type Invoice = {
   month: string;
-  active: boolean;
+  code: string;
 };
 
 export type Customer = {
@@ -14,118 +14,17 @@ export type YearData = {
   customers: Customer[];
 };
 
-export const mockYears = [
-  {
-    year: 2017,
-    customers: [
-      {
-        name: "Josevaldo",
-        instalationNumber: "456456a1561651",
-        invoices: [
-          { month: "Janeiro", active: true },
-          { month: "Fevereiro", active: true },
-          { month: "Março", active: true },
-          { month: "Abril", active: true },
-          { month: "Maio", active: false },
-          { month: "Junho", active: false },
-          { month: "Julho", active: true },
-          { month: "Agosto", active: false },
-          { month: "Setembro", active: true },
-          { month: "Outubro", active: true },
-          { month: "Novembro", active: true },
-          { month: "Dezembro", active: false },
-        ],
-      },
-      {
-        name: "Ana Clara",
-        instalationNumber: "9864571456141",
-        invoices: [
-          { month: "Janeiro", active: false },
-          { month: "Fevereiro", active: false },
-          { month: "Março", active: false },
-          { month: "Abril", active: true },
-          { month: "Maio", active: true },
-          { month: "Junho", active: true },
-          { month: "Julho", active: true },
-          { month: "Agosto", active: false },
-          { month: "Setembro", active: false },
-          { month: "Outubro", active: false },
-          { month: "Novembro", active: true },
-          { month: "Dezembro", active: false },
-        ],
-      },
-      {
-        name: "Roberto",
-        instalationNumber: "5123156123451",
-        invoices: [
-          { month: "Janeiro", active: false },
-          { month: "Fevereiro", active: true },
-          { month: "Março", active: true },
-          { month: "Abril", active: true },
-          { month: "Maio", active: true },
-          { month: "Junho", active: true },
-          { month: "Julho", active: false },
-          { month: "Agosto", active: true },
-          { month: "Setembro", active: true },
-          { month: "Outubro", active: true },
-          { month: "Novembro", active: false },
-          { month: "Dezembro", active: false },
-        ],
-      },
-      {
-        name: "Mariana",
-        instalationNumber: "7152156123487",
-        invoices: [
-          { month: "Janeiro", active: true },
-          { month: "Fevereiro", active: true },
-          { month: "Março", active: false },
-          { month: "Abril", active: false },
-          { month: "Maio", active: false },
-          { month: "Junho", active: true },
-          { month: "Julho", active: false },
-          { month: "Agosto", active: false },
-          { month: "Setembro", active: true },
-          { month: "Outubro", active: false },
-          { month: "Novembro", active: false },
-          { month: "Dezembro", active: true },
-        ],
-      },
-      {
-        name: "Carlos",
-        instalationNumber: "4156123165487",
-        invoices: [
-          { month: "Janeiro", active: false },
-          { month: "Fevereiro", active: true },
-          { month: "Março", active: true },
-          { month: "Abril", active: true },
-          { month: "Maio", active: false },
-          { month: "Junho", active: true },
-          { month: "Julho", active: true },
-          { month: "Agosto", active: true },
-          { month: "Setembro", active: false },
-          { month: "Outubro", active: false },
-          { month: "Novembro", active: false },
-          { month: "Dezembro", active: false },
-        ],
-      },
-      {
-        name: "Fernanda",
-        instalationNumber: "6515613616161",
-        invoices: [
-          { month: "Janeiro", active: true },
-          { month: "Fevereiro", active: false },
-          { month: "Março", active: false },
-          { month: "Abril", active: true },
-          { month: "Maio", active: true },
-          { month: "Junho", active: false },
-          { month: "Julho", active: false },
-          { month: "Agosto", active: true },
-          { month: "Setembro", active: true },
-          { month: "Outubro", active: true },
-          { month: "Novembro", active: false },
-          { month: "Dezembro", active: true },
-        ],
-      },
-    ],
-  },
+export const months = [
+  { month: "Janeiro", code: "JAN" },
+  { month: "Fevereiro", code: "FEV" },
+  { month: "Março", code: "MAR" },
+  { month: "Abril", code: "ABR" },
+  { month: "Maio", code: "MAI" },
+  { month: "Junho", code: "JUN" },
+  { month: "Julho", code: "JUL" },
+  { month: "Agosto", code: "AGO" },
+  { month: "Setembro", code: "SET" },
+  { month: "Outubro", code: "OUT" },
+  { month: "Novembro", code: "NOV" },
+  { month: "Dezembro", code: "DEZ" },
 ];
