@@ -5,14 +5,14 @@ import pdfIconDisabled from "./../../assets/pdf_icon_disabled.png";
 import { Eye } from "lucide-react";
 import classNames from "classnames";
 import { Pagination } from "@/components/pagination";
-import { getCustomersWithInvoices } from "@/api/get-customers-with-invoices";
+import { Customer, getCustomersWithInvoices, Invoice, InvoiceItem } from "@/api/get-customers-with-invoices";
 import { months } from "./invoice-mocks";
 import { DrawerDialog } from "@/components/DrawerDialog";
 
 export function Invoices() {
   const [years, setYears] = useState<Array<number>>([]);
   const [selectedYear, setSelectedYear] = useState<number>();
-  const [customers, setCustomers] = useState<any>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   useEffect(() => {
     loadData();
   }, []);
@@ -29,7 +29,6 @@ export function Invoices() {
 
     setCustomers(customersResponse.customers);
     setYears(customersResponse.availableYears as number[]);
-    console.log(customers);
   }
 
   function updateUrlQueryParam(year: number) {
@@ -88,7 +87,7 @@ export function Invoices() {
                 <TableCell className="text-center">{customerNumber}</TableCell>
 
                 {months.map((month) => {
-                  const invoice = invoices.find(({ reference }) => month.code === reference.split("/")[0]);
+                  const invoice = invoices.find(({ reference }: Invoice) => month.code === reference.split("/")[0]);
                   if (invoice) {
                     return (
                       <DrawerDialog
@@ -160,14 +159,16 @@ export function Invoices() {
                               <div className="flex-1 min-w-[350px] p-4 h-40 overflow-y-auto">
                                 <h3 className="font-bold text-md mb-2 text-white">Itens da Fatura:</h3>
                                 <div className="bg-gray-50 p-4 rounded-lg shadow-md">
-                                  {invoice.invoice_items.map((item) => (
+                                  {invoice.invoice_items.map((item: InvoiceItem) => (
                                     <div key={item.id} className="border-b py-2">
                                       <p>
-                                        <strong>Tipo de Item:</strong> {item.invoice_item_type_id}
+                                        <strong>Item:</strong> {item.invoiceItemType.type_name}
                                       </p>
-                                      <p>
-                                        <strong>Quantidade:</strong> {item.quantity ? item.quantity : "N/A"}
-                                      </p>
+                                      {item.quantity && (
+                                        <p>
+                                          <strong>Quantidade:</strong> {item.quantity}
+                                        </p>
+                                      )}
                                       <p>
                                         <strong>Valor Total:</strong> R$ {item.total_value}
                                       </p>
