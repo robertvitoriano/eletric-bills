@@ -27,8 +27,8 @@ class CustomersRepository implements ICustomersRepository {
     const total = await queryBuilder.getCount();
     return total;
   }
-
-  async list(data: { page?: number; perPage?: number; name?: string; year?: number; customerId?: string }) {
+  economyWithGDValuesPerMonth: Array<{ month: string; totalWithoutGD: number; economyWithGD: number }>;
+  async list(data?: { page?: number; perPage?: number; name?: string; year?: number; customerId?: string }) {
     const { page = 1, year, customerId, perPage = 10, name } = data;
     const offset = (page - 1) * perPage || 0;
 
@@ -48,7 +48,7 @@ class CustomersRepository implements ICustomersRepository {
     if (name) {
       queryBuilder.where("customer.name = :name", { name });
     }
-    queryBuilder.skip(offset).take(perPage);
+    if (offset && perPage) queryBuilder.skip(offset).take(perPage);
 
     const customers = await queryBuilder.getMany();
 

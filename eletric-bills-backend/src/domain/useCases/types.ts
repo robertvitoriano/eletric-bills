@@ -23,7 +23,44 @@ export type CustomerInfo = {
   customerNumber: string;
   customerInstalationNumber: string;
 };
-export interface Period {
-  start: Date;
-  end: Date;
+
+export interface InvoiceItemType {
+  id: number;
+  type_name: string;
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  invoice_item_type_id: number;
+  quantity: string | null;
+  total_value: number;
+  invoiceItemType: InvoiceItemType;
+}
+
+export interface Invoice {
+  id: string;
+  customer_id: string;
+  reference: string;
+  due_date: string;
+  total_amount: number;
+  reading_days: number;
+  previous_reading: string;
+  current_reading: string;
+  next_reading: string;
+  url: string;
+  bar_code_number: string;
+  invoice_items: InvoiceItem[];
+}
+
+export interface ICustomer {
+  id: string;
+  name: string;
+  address: string;
+  cpf_cnpj: string;
+  customer_number: string;
+  installation_number: string;
+  invoices: Invoice[];
+  installationNumber: string;
+  customerNumber: string;
 }
