@@ -64,11 +64,9 @@ export function Dashboard() {
       }
     }
   }
-
+  if (loading) return <Spinner />;
   return (
     <>
-      {loading && <Spinner />}
-
       <div className="flex flex-col gap-4 text-white p-4">
         <div className="flex justify-between">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
