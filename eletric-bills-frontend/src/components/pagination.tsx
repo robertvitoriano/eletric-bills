@@ -13,7 +13,7 @@ export const Pagination = (props: PaginationProps) => {
   const totalPages = Math.ceil(totalCount / perPage) || 1;
 
   const handlePageChange = (newPageIndex: number) => {
-    if (newPageIndex >= 0) {
+    if (newPageIndex >= 0 && pageIndex + 1 <= totalPages) {
       onPageChange(newPageIndex);
     }
   };
