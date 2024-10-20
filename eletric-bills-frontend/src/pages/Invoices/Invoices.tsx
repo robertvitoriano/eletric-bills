@@ -55,10 +55,28 @@ export function Invoices() {
 
   function updateUrlQueryParams() {
     const params = new URLSearchParams(window.location.search);
-    if (selectedYear) params.set("year", selectedYear.toString());
-    if (name) params.set("name", name);
-    if (customerNumber) params.set("customer_number", customerNumber);
-    if (installationNumber) params.set("installation_number", installationNumber);
+    if (selectedYear) {
+      params.set("year", selectedYear.toString());
+    } else {
+      params.delete("year");
+    }
+
+    if (name) {
+      params.set("name", name);
+    } else {
+      params.delete("name");
+    }
+    if (customerNumber) {
+      params.set("customer_number", customerNumber);
+    } else {
+      params.delete("customer_number");
+    }
+
+    if (installationNumber) {
+      params.set("installation_number", installationNumber);
+    } else {
+      params.delete("installation_number");
+    }
 
     window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
   }
