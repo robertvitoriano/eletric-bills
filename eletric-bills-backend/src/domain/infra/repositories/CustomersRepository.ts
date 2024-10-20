@@ -25,15 +25,15 @@ class CustomersRepository implements ICustomersRepository {
     return total;
   }
 
-  async list(data: { page?: number; year?: number; customerId?: string; limit: number }) {
-    const { page = 1, year, customerId, limit } = data;
-    const offset = (page - 1) * limit || 0;
+  async list(data: { page?: number; perPage?: number; name?: string; year?: number; customerId?: string }) {
+    const { page = 1, year, customerId, perPage = 10 } = data;
+    const offset = (page - 1) * perPage || 0;
 
     const queryBuilder = this.customerRepository
       .createQueryBuilder("customer")
       .leftJoinAndSelect("customer.invoices", "invoice")
       .leftJoinAndSelect("invoice.invoice_items", "invoiceItems")
-      .innerJoinAndSelect("invoiceItems.invoiceItemType", "invoiceItemTypes");
+      .leftJoinAndSelect("invoiceItems.invoiceItemType", "invoiceItemTypes");
 
     if (customerId) {
       queryBuilder.where("customer.id = :customerId", { customerId });
@@ -43,7 +43,7 @@ class CustomersRepository implements ICustomersRepository {
       queryBuilder.andWhere("EXTRACT(YEAR FROM invoice.due_date) = :year", { year });
     }
 
-    queryBuilder.skip(offset).take(limit);
+    queryBuilder.skip(offset).take(perPage);
 
     const customers = await queryBuilder.getMany();
 

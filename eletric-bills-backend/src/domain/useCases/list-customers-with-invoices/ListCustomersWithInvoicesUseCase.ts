@@ -9,8 +9,14 @@ export class ListCustomersWithInvoicesUseCase {
     @inject("InvoicesRepository")
     private invoicesRepository: IInvoicesRepository
   ) {}
-  async execute(data: { page?: number; year?: number; customerNumber?: string; name: string }): Promise<any> {
-    const { customerNumber, page, year } = data;
+  async execute(data: {
+    page?: number;
+    perPage?: number;
+    year?: number;
+    customerNumber?: string;
+    name: string;
+  }): Promise<any> {
+    const { customerNumber, page, year, perPage, name } = data;
 
     let customerId = "";
     if (customerNumber) {
@@ -22,8 +28,10 @@ export class ListCustomersWithInvoicesUseCase {
       page: Number(page),
       year,
       customerId: customerId,
-      limit,
+      perPage,
+      name,
     });
+    console.log({ customerId });
     const total = await this.customersReposirory.getTotal({ year, customerId: customerId });
     const availableYears = await this.invoicesRepository.getAvailableYears();
     return {
@@ -31,7 +39,7 @@ export class ListCustomersWithInvoicesUseCase {
         customersFetched: customers.length,
         currentPage: page || 1,
         total,
-        pageTotal: Math.ceil(total / limit),
+        pagesTotal: Math.ceil(total / limit),
         perPage: limit,
       },
       customers,

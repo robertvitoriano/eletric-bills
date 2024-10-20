@@ -19,7 +19,7 @@ export function Invoices() {
   const [years, setYears] = useState<Array<number>>([]);
   const [selectedYear, setSelectedYear] = useState<number>();
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [pagination, setPagination] = useState<IPagination>({ pageTotal: 1, currentPage: 1, total: 1, perPage: 1 });
+  const [pagination, setPagination] = useState<IPagination>({ pagesTotal: 1, currentPage: 1, total: 1, perPage: 1 });
   useEffect(() => {
     loadData();
   }, []);

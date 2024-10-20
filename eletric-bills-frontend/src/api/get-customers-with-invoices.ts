@@ -44,7 +44,7 @@ export interface Customer {
 export interface Pagination {
   currentPage: number;
   total: number;
-  pageTotal: number;
+  pagesTotal: number;
   perPage: number;
 }
 
