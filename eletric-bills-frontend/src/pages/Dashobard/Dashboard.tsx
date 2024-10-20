@@ -23,7 +23,7 @@ export function Dashboard() {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      setNewFileToBeUploaded(file);
+      setNewFileToBeUploaded(file as any);
       setFileSelected(true);
       setIsDragging(false);
     }
@@ -44,7 +44,7 @@ export function Dashboard() {
 
     if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
       const file = event.dataTransfer.files[0];
-      setNewFileToBeUploaded(file);
+      setNewFileToBeUploaded(file as any);
       setFileSelected(true);
     }
   };

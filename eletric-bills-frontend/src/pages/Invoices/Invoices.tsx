@@ -6,7 +6,6 @@ import { Eye } from "lucide-react";
 import classNames from "classnames";
 import { mockYears, YearData } from "./invoice-mocks";
 import { Pagination } from "@/components/pagination";
-import { api } from "@/api/api";
 import { getCustomersWithInvoices } from "@/api/get-customers-with-invoices";
 
 export function Invoices() {
