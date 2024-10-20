@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { CreateInvoiceController } from "../../../../domain/infra/controllers/CreateInvoiceController";
+import { ListInvoicesByCustomerController } from "../../../../domain/infra/controllers/ListInvoicesByUserController";
 
 const customersRouter = Router();
-const createInvoiceController = new CreateInvoiceController();
-customersRouter.get("/", createInvoiceController.handle);
-
+const listInvoicesByCustomerController = new ListInvoicesByCustomerController();
+customersRouter.get("/", listInvoicesByCustomerController.handle);
 export { customersRouter };

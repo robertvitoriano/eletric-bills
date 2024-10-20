@@ -5,6 +5,7 @@ import multer from "multer";
 
 const invoicesRouter = Router();
 const createInvoiceController = new CreateInvoiceController();
+
 const upload = multer(uploadConfig.upload("./tmp/"));
 invoicesRouter.post("/", upload.fields([{ name: "invoice" }]), createInvoiceController.handle);
 

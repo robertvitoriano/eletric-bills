@@ -12,7 +12,7 @@ export class InvoiceService {
   ) {}
 
   async storeNewInvoice(data: IStoreInvoiceDTO) {
-    let currentInvoice = await this.invoicesRepository.find({
+    let currentInvoice = await this.invoicesRepository.findOne({
       bar_code_number: data.barCode,
     });
     const currentInvoiceYear = new Date(data.invoiceDueDate).getFullYear();
@@ -30,56 +30,59 @@ export class InvoiceService {
         url: data.invoiceUrl,
         customer_id: data.customerId,
       });
+      this.storeInvoiceItems(data, currentInvoice.id);
+    }
+  }
+  private async storeInvoiceItems(data: IStoreInvoiceDTO, currentInvoiceId: string) {
+    this.invoicesRepository.storeItem({
+      invoice_id: currentInvoiceId,
+      invoice_item_type_id: InvoiceItemTypes.ELECTRICITY.id,
+      quantity: data.energyConsumption.quantity,
+      total_value: data.energyConsumption.cost,
+    });
+    this.invoicesRepository.storeItem({
+      invoice_id: currentInvoiceId,
+      invoice_item_type_id: InvoiceItemTypes.SCEE_ENERGY.id,
+      quantity: data.sceeWithoutICMSEnergy.quantity,
+      total_value: data.sceeWithoutICMSEnergy.cost,
+    });
+    this.invoicesRepository.storeItem({
+      invoice_id: currentInvoiceId,
+      invoice_item_type_id: InvoiceItemTypes.COMPENSATED_ENERGY.id,
+      quantity: data.compensatedGDEnergy.quantity,
+      total_value: data.compensatedGDEnergy.cost,
+    });
+    if (!isNaN(data.publicIluminationCost)) {
       this.invoicesRepository.storeItem({
-        invoice_id: currentInvoice.id,
-        invoice_item_type_id: InvoiceItemTypes.ELECTRICITY.id,
-        quantity: data.energyConsumption.quantity,
-        total_value: data.energyConsumption.cost,
+        invoice_id: currentInvoiceId,
+        invoice_item_type_id: InvoiceItemTypes.MUNICIPAL_LIGHTING_CONTRIBUTION.id,
+        total_value: data.publicIluminationCost,
+        quantity: null,
       });
+    }
+    if (!isNaN(data.paymentRefund)) {
       this.invoicesRepository.storeItem({
-        invoice_id: currentInvoice.id,
-        invoice_item_type_id: InvoiceItemTypes.SCEE_ENERGY.id,
-        quantity: data.sceeWithoutICMSEnergy.quantity,
-        total_value: data.sceeWithoutICMSEnergy.cost,
+        invoice_id: currentInvoiceId,
+        invoice_item_type_id: InvoiceItemTypes.PAYMENT_REFUND.id,
+        total_value: data.paymentRefund,
+        quantity: null,
       });
+    }
+    if (!isNaN(data.yellowFlagCost)) {
       this.invoicesRepository.storeItem({
-        invoice_id: currentInvoice.id,
-        invoice_item_type_id: InvoiceItemTypes.COMPENSATED_ENERGY.id,
-        quantity: data.compensatedGDEnergy.quantity,
-        total_value: data.compensatedGDEnergy.cost,
+        invoice_id: currentInvoiceId,
+        invoice_item_type_id: InvoiceItemTypes.YELLOW_FLAG.id,
+        total_value: data.yellowFlagCost,
+        quantity: null,
       });
-      if (!isNaN(data.publicIluminationCost)) {
-        this.invoicesRepository.storeItem({
-          invoice_id: currentInvoice.id,
-          invoice_item_type_id: InvoiceItemTypes.MUNICIPAL_LIGHTING_CONTRIBUTION.id,
-          total_value: data.publicIluminationCost,
-          quantity: null,
-        });
-      }
-      if (!isNaN(data.paymentRefund)) {
-        this.invoicesRepository.storeItem({
-          invoice_id: currentInvoice.id,
-          invoice_item_type_id: InvoiceItemTypes.PAYMENT_REFUND.id,
-          total_value: data.paymentRefund,
-          quantity: null,
-        });
-      }
-      if (!isNaN(data.yellowFlagCost)) {
-        this.invoicesRepository.storeItem({
-          invoice_id: currentInvoice.id,
-          invoice_item_type_id: InvoiceItemTypes.YELLOW_FLAG.id,
-          total_value: data.yellowFlagCost,
-          quantity: null,
-        });
-      }
-      if (!isNaN(data.damageCompensations)) {
-        this.invoicesRepository.storeItem({
-          invoice_id: currentInvoice.id,
-          invoice_item_type_id: InvoiceItemTypes.DAMAGE_COMPENSATIONS.id,
-          total_value: data.damageCompensations,
-          quantity: null,
-        });
-      }
+    }
+    if (!isNaN(data.damageCompensations)) {
+      this.invoicesRepository.storeItem({
+        invoice_id: currentInvoiceId,
+        invoice_item_type_id: InvoiceItemTypes.DAMAGE_COMPENSATIONS.id,
+        total_value: data.damageCompensations,
+        quantity: null,
+      });
     }
   }
   private getAdjustedYear(readingDate: string, currentYear: number): { nextYear: number; previousYear: number } {
