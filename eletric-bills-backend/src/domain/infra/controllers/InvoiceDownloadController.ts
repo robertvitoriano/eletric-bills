@@ -3,10 +3,10 @@ import { HttpStatusCode } from "axios";
 import { InvoiceDownloadUseCase } from "../../useCases/invoice-download/InvoiceDownloadUseCase";
 import { container } from "tsyringe";
 
-class DownloadInvoiceController {
+class InvoiceDownloadController {
   async handle(request: Request, response: Response): Promise<Response> {
     try {
-      const { invoiceId } = request.body;
+      const { invoiceId } = request.params;
       const invoiceDownloadUseCase = container.resolve(InvoiceDownloadUseCase);
 
       const { fileContent, contentType } = await invoiceDownloadUseCase.execute(invoiceId);
@@ -20,4 +20,4 @@ class DownloadInvoiceController {
   }
 }
 
-export { DownloadInvoiceController };
+export { InvoiceDownloadController };
