@@ -18,7 +18,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5555", "https://eletric-invoices.robertvitoriano.com"],
+    origin: "*",
     methods: ["GET", "POST", "DELETE", "PATCH"],
   })
 );

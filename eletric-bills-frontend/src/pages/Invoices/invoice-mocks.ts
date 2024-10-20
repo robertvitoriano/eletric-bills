@@ -3,7 +3,7 @@ export type Invoice = {
   active: boolean;
 };
 
-export type Row = {
+export type Customer = {
   name: string;
   instalationNumber: string;
   invoices: Invoice[];
@@ -11,13 +11,13 @@ export type Row = {
 
 export type YearData = {
   year: number;
-  rows: Row[];
+  customers: Customer[];
 };
 
 export const mockYears = [
   {
     year: 2017,
-    rows: [
+    customers: [
       {
         name: "Josevaldo",
         instalationNumber: "456456a1561651",

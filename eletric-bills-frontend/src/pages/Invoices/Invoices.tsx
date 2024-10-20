@@ -6,10 +6,29 @@ import { Eye } from "lucide-react";
 import classNames from "classnames";
 import { mockYears, YearData } from "./invoice-mocks";
 import { Pagination } from "@/components/pagination";
+import { api } from "@/api/api";
+import { getCustomersWithInvoices } from "@/api/get-customers-with-invoices";
 
 export function Invoices() {
   const [years] = useState<Array<YearData>>(mockYears);
   const [selectedYear, setSelectedYear] = useState<YearData>();
+  const [customers, setCustomers] = useState<any>([]);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const yearFromQuery = params.get("year");
+    if (yearFromQuery) {
+      const year = years.find((y) => y.year.toString() === yearFromQuery);
+      if (year) setSelectedYear(year);
+    } else {
+      setSelectedYear(years[0]);
+    }
+    loadData();
+  }, [years]);
+
+  async function loadData() {
+    const customersResponse = await getCustomersWithInvoices();
+    setCustomers(customersResponse.customers);
+  }
 
   function updateUrlQueryParam(year: string) {
     const params = new URLSearchParams(window.location.search);
@@ -21,17 +40,6 @@ export function Invoices() {
     setSelectedYear(year);
     updateUrlQueryParam(year.year.toString());
   }
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const yearFromQuery = params.get("year");
-    if (yearFromQuery) {
-      const year = years.find((y) => y.year.toString() === yearFromQuery);
-      if (year) setSelectedYear(year);
-    } else {
-      setSelectedYear(years[0]);
-    }
-  }, [years]);
 
   return (
     <div className="flex flex-col gap-4 w-screen h-screen items-center relative text-white p-4">
@@ -57,7 +65,7 @@ export function Invoices() {
             <TableRow>
               <TableHead className="w-[100px] text-center text-white">Nome</TableHead>
               <TableHead className="text-center text-white">Número de Instalação</TableHead>
-              {selectedYear?.rows[0].invoices.map(({ month }) => (
+              {selectedYear?.customers[0].invoices.map(({ month }) => (
                 <TableHead key={month} className="text-center text-white">
                   {month}
                 </TableHead>
@@ -65,39 +73,38 @@ export function Invoices() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {selectedYear &&
-              selectedYear.rows.map(({ instalationNumber, name, invoices }) => (
-                <TableRow key={instalationNumber}>
-                  <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
-                  <TableCell className="text-center">{instalationNumber}</TableCell>
-                  {invoices.map(({ month, active }) => (
-                    <TableCell key={month}>
-                      <div className="flex justify-center gap-2">
-                        <div className={classNames("flex flex-col gap-2")}>
+            {customers.map(({ instalationNumber, name, invoices }) => (
+              <TableRow key={instalationNumber}>
+                <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
+                <TableCell className="text-center">{instalationNumber}</TableCell>
+                {invoices.map(({ month, active }) => (
+                  <TableCell key={month}>
+                    <div className="flex justify-center gap-2">
+                      <div className={classNames("flex flex-col gap-2")}>
+                        <div
+                          className={classNames(
+                            "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
+                            "flex-col relative",
+                            {
+                              "hover:bg-white hover:text-primary cursor-pointer": active,
+                            }
+                          )}
+                        >
+                          <img src={active ? pdfIcon : pdfIconDisabled} className="h-10" />
                           <div
-                            className={classNames(
-                              "flex justify-center items-center bg-primary w-fit p-2 text-bold rounded-xl",
-                              "flex-col relative",
-                              {
-                                "hover:bg-white hover:text-primary cursor-pointer": active,
-                              }
-                            )}
+                            className={classNames("opacity-0 flex items-center justify-center h-12 w-10 absolute", {
+                              "hover:opacity-100": active,
+                            })}
                           >
-                            <img src={active ? pdfIcon : pdfIconDisabled} className="h-10" />
-                            <div
-                              className={classNames("opacity-0 flex items-center justify-center h-12 w-10 absolute", {
-                                "hover:opacity-100": active,
-                              })}
-                            >
-                              <Eye />
-                            </div>
+                            <Eye />
                           </div>
                         </div>
                       </div>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+                    </div>
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
         <div className="p-4 rounded-lg bg-transparent text-white">

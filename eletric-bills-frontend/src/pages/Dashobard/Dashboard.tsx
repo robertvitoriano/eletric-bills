@@ -7,12 +7,13 @@ import { InvoicesComposition } from "./InvoicesComposition";
 import { DrawerDialog } from "@/components/DrawerDialog";
 import { FileUp } from "lucide-react";
 import { useState, useRef } from "react";
+import { uploadNewInvoice } from "@/api/upload-new-invoice";
 
 export function Dashboard() {
   const [fileSelected, setFileSelected] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const [newFileToBeUploaded, setNewFileToBeUploaded] = useState();
   const openFileDialog = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -21,6 +22,8 @@ export function Dashboard() {
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setNewFileToBeUploaded(file);
       setFileSelected(true);
       setIsDragging(false);
     }
@@ -40,11 +43,22 @@ export function Dashboard() {
     setIsDragging(false);
 
     if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      //const file = event.dataTransfer.files[0];
+      const file = event.dataTransfer.files[0];
+      setNewFileToBeUploaded(file);
       setFileSelected(true);
     }
   };
 
+  async function handleInvoiceFileUpload() {
+    console.log("Trying to upload");
+    if (newFileToBeUploaded) {
+      try {
+        await uploadNewInvoice(newFileToBeUploaded);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
   return (
     <>
       <div className="flex flex-col gap-4 text-white p-4">
@@ -79,7 +93,12 @@ export function Dashboard() {
                 </div>
                 <div className="my-4">
                   {fileSelected && (
-                    <button className="bg-emerald-500 p-4 text-white font-bold rounded-md">Processar dados</button>
+                    <button
+                      className="bg-emerald-500 p-4 text-white font-bold rounded-md"
+                      onClick={handleInvoiceFileUpload}
+                    >
+                      Processar dados
+                    </button>
                   )}
                 </div>
               </div>

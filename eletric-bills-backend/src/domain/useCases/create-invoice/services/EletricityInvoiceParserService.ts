@@ -221,7 +221,7 @@ export class EletricityInvoiceParser {
   }
   private getCustomerInstalationNumber(): string {
     const customerNumberReferenteIndex = this.sectionsTrimmed.findIndex((section) => section.includes("INSTALAÇÃO\n"));
-    return this.sectionsTrimmed[customerNumberReferenteIndex + 2];
+    return this.sectionsTrimmed[customerNumberReferenteIndex + 2].replace("\n", "");
   }
 
   private getInvoiceBarCodeNumber(dueDate: string): {

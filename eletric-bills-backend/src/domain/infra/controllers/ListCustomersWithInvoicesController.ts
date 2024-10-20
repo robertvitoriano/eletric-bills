@@ -17,7 +17,7 @@ export class ListCustomersWithInvoicesController {
 
       return response.status(HttpStatusCode.Ok).json({
         message: "Customers successfully fetched",
-        customersResponse,
+        ...customersResponse,
       });
     } catch (error) {
       console.error("Error storing invoice:", error);
