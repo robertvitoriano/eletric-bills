@@ -97,7 +97,7 @@ export function Dashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <DrawerDialog
             title="Processar nova fatura"
-            dialogDescription="Clique abaixo para selecionar ou arraste os arquivos que deseja processar"
+            dialogDescription="Clique abaixo para selecionar varias faturas ou arraste e solte uma fatura que deseja processar"
             drawerDescription="Clique abaixo para selecionar novas faturas"
             trigger={
               <div className="text-white bg-emerald-500 p-4 cursor-pointer font-bold w-fit rounded-md">
@@ -113,11 +113,12 @@ export function Dashboard() {
                   onDrop={handleDrop}
                   onClick={openFileDialog}
                 >
-                  <div className="relative flex items-center justify-center cursor-pointer">
+                  <div className="relative flex flex-col gap-4 items-center justify-center cursor-pointer ">
                     <div className="absolute w-80 h-80 bg-transparent border-2 border-gray-500 rounded-xl" />
                     <div className="absolute w-32 h-32 bg-gray-500 opacity-20 rounded-full" />
                     {!isDragging && <FileUp className="w-16 h-16 text-emerald-500 z-10" />}
                     {isDragging && <span className="font-bold text-2xl text-white">Solte os arquivos!</span>}
+                    <span className="text-white">Clique Aqui!</span>
                   </div>
 
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileSelect} />

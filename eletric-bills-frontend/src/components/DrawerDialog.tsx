@@ -46,7 +46,7 @@ export function DrawerDialog({
         <DialogContent className="sm:max-w-[425px] bg-secondary">
           <DialogHeader>
             <DialogTitle className="text-white">{title}</DialogTitle>
-            <DialogDescription className="text-white">{dialogDescription}</DialogDescription>
+            <DialogDescription className="text-white text-sm">{dialogDescription}</DialogDescription>
           </DialogHeader>
           {content}
         </DialogContent>

@@ -2,12 +2,14 @@ import { Repository } from "typeorm";
 import { PostgresDataSource } from "../../../shared/infra/database/PostgresDataSource";
 import { Customer } from "../../entities/Customer";
 import { ICustomersRepository } from "../../repositories/ICustomersRepository";
+import { ICustomer } from "../../useCases/types";
 class CustomersRepository implements ICustomersRepository {
   private customerRepository: Repository<Customer>;
 
   constructor() {
     this.customerRepository = PostgresDataSource.getRepository(Customer);
   }
+
   async getTotal(data: { year?: number; customerId?: string }): Promise<number> {
     const { year, customerId } = data;
 
@@ -27,7 +29,13 @@ class CustomersRepository implements ICustomersRepository {
     const total = await queryBuilder.getCount();
     return total;
   }
-  async list(data?: { page?: number; perPage?: number; name?: string; year?: number; customerId?: string }) {
+  async list(data?: {
+    page?: number;
+    year: number;
+    customerId: string;
+    perPage: number;
+    name: string;
+  }): Promise<ICustomer[]> {
     const { page = 1, year, customerId, perPage = 10, name } = data;
     const offset = (page - 1) * perPage || 0;
 
