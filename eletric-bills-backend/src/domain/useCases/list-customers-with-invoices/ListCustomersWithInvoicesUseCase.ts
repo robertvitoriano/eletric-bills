@@ -23,7 +23,6 @@ export class ListCustomersWithInvoicesUseCase {
       const { id } = await this.customersReposirory.find({ customer_number: customerNumber });
       customerId = id;
     }
-    const limit = 10;
     const customers = await this.customersReposirory.list({
       page: Number(page),
       year,
@@ -31,7 +30,6 @@ export class ListCustomersWithInvoicesUseCase {
       perPage,
       name,
     });
-    console.log({ customerId });
     const total = await this.customersReposirory.getTotal({ year, customerId: customerId });
     const availableYears = await this.invoicesRepository.getAvailableYears();
     return {
@@ -39,8 +37,8 @@ export class ListCustomersWithInvoicesUseCase {
         customersFetched: customers.length,
         currentPage: page || 1,
         total,
-        pagesTotal: Math.ceil(total / limit),
-        perPage: limit,
+        pagesTotal: Math.ceil(total / perPage),
+        perPage,
       },
       customers,
       availableYears,
