@@ -6,15 +6,26 @@ import { FinancialResults } from "./FinancialResults";
 import { InvoicesComposition } from "./InvoicesComposition";
 import { DrawerDialog } from "@/components/DrawerDialog";
 import { FileUp } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { uploadNewInvoice } from "@/api/upload-new-invoice";
 import { Spinner } from "@/components/Spinner";
 import { toast } from "sonner";
+import { getStatistics } from "@/api/get-statistics";
 export function Dashboard() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [filesSelected, setFilesSelected] = useState<File[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [totalConsumptionOfElectricEnergy, settotalConsumptionOfElectricEnergy] = useState<number>();
+
+  useEffect(() => {
+    loadStatistics();
+  }, []);
+
+  async function loadStatistics() {
+    const statisticsResponse = await getStatistics();
+    settotalConsumptionOfElectricEnergy(statisticsResponse.totalConsumptionOfElectricEnergy);
+  }
   const openFileDialog = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -122,7 +133,7 @@ export function Dashboard() {
         </div>
 
         <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
-          <EffectiveTotalCard />
+          <EffectiveTotalCard totalConsumptionOfElectricEnergy={totalConsumptionOfElectricEnergy} />
           <TotalWithoutGDCard />
           <TotalCompensationGDCard />
         </div>

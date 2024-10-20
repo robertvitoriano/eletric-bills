@@ -11,6 +11,21 @@ class InvoicesRepository implements IInvoicesRepository {
     this.invoiceRepository = PostgresDataSource.getRepository(Invoice);
     this.invoiceItemRepository = PostgresDataSource.getRepository(InvoiceItem);
   }
+  async getSumOfInvoiceItemsByType(invoiceItemTypeId: number, customerId?: string): Promise<number> {
+    const queryBuilder = this.invoiceItemRepository
+      .createQueryBuilder("invoiceItem")
+      .select("SUM(invoiceItem.total_value)", "total")
+      .where("invoiceItem.invoice_item_type_id = :invoiceItemTypeId", { invoiceItemTypeId });
+
+    if (customerId) {
+      queryBuilder
+        .innerJoinAndSelect("invoiceItem.invoice", "invoice")
+        .where("invoice.customer_id = :customerId", { customerId });
+    }
+
+    const result = await queryBuilder.getRawOne();
+    return parseFloat(result?.total || "0"); // Return total or 0 if no records found
+  }
 
   async storeItem(invoiceData: Omit<InvoiceItem, "id" | "invoice" | "invoiceItemType">): Promise<InvoiceItem> {
     const invoiceItem = this.invoiceItemRepository.create(invoiceData);
