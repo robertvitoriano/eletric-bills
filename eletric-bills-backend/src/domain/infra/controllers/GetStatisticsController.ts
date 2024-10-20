@@ -13,9 +13,12 @@ class GetStatisticsController {
       const periodData: Period | undefined = period
         ? { start: new Date(period.start as string), end: new Date(period.end as string) }
         : undefined;
-      const { totalConsumptionOfElectricEnergy } = await getStatisticsUseCase.execute({});
+      const { consumptionOfElectricEnergy, compensatedEnergy, totalCostWithoutGDEnergy, gdEconomy } =
+        await getStatisticsUseCase.execute({});
 
-      return response.status(HttpStatusCode.Ok).send({ totalConsumptionOfElectricEnergy });
+      return response
+        .status(HttpStatusCode.Ok)
+        .send({ consumptionOfElectricEnergy, compensatedEnergy, totalCostWithoutGDEnergy, gdEconomy });
     } catch (error) {
       console.error(error);
       return response.status(404).send(error instanceof Error ? error.message : "File not found");

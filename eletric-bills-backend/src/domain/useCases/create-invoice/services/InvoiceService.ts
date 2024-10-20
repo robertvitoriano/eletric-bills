@@ -84,6 +84,14 @@ export class InvoiceService {
         quantity: null,
       });
     }
+    if (!isNaN(data.totalCost)) {
+      this.invoicesRepository.storeItem({
+        invoice_id: currentInvoiceId,
+        invoice_item_type_id: InvoiceItemTypes.TOTAL.id,
+        total_value: data.totalCost,
+        quantity: null,
+      });
+    }
   }
   private getAdjustedYear(readingDate: string, currentYear: number): { nextYear: number; previousYear: number } {
     const [_, month] = readingDate.split("/").map(Number);

@@ -10,7 +10,10 @@ interface IExecuteParams {
 }
 
 interface IStatisticsResult {
-  totalConsumptionOfElectricEnergy: number;
+  consumptionOfElectricEnergy: number;
+  compensatedEnergy: number;
+  totalCostWithoutGDEnergy: number;
+  gdEconomy: number;
 }
 
 @injectable()
@@ -26,18 +29,36 @@ export class GetStatisticsUseCase {
     name = "",
   }: IExecuteParams): Promise<IStatisticsResult> {
     try {
-      const totalConsumptionOfElectricity = await this.invoicesRepository.getSumOfInvoiceItemsByType(
+      const consumptionOfElectricity = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.ELECTRICITY.id,
         "quantity",
         customerNumber ? customerNumber : undefined
       );
-      const totalConsumptionOfSCEEEnergy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
+      const consumptionOfSCEEEnergy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.SCEE_ENERGY.id,
         "quantity",
         customerNumber ? customerNumber : undefined
       );
-      const totalConsumptionOfElectricEnergy = totalConsumptionOfElectricity + totalConsumptionOfSCEEEnergy;
-      return { totalConsumptionOfElectricEnergy };
+      const compensatedEnergy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
+        InvoiceItemTypes.COMPENSATED_ENERGY.id,
+        "quantity",
+        customerNumber ? customerNumber : undefined
+      );
+      const effectiveTotalCost = await this.invoicesRepository.getSumOfInvoiceItemsByType(
+        InvoiceItemTypes.TOTAL.id,
+        "total_value",
+        customerNumber ? customerNumber : undefined
+      );
+      const gdEconomy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
+        InvoiceItemTypes.COMPENSATED_ENERGY.id,
+        "total_value",
+        customerNumber ? customerNumber : undefined
+      );
+      const gdEconomyModule = gdEconomy * -1;
+      const totalCostWithoutGDEnergy = effectiveTotalCost + gdEconomyModule;
+      const consumptionOfElectricEnergy = consumptionOfElectricity + consumptionOfSCEEEnergy;
+
+      return { consumptionOfElectricEnergy, compensatedEnergy, totalCostWithoutGDEnergy, gdEconomy: gdEconomyModule };
     } catch (error) {
       console.error("Error fetching total consumption of electricity:", error);
       throw new AppError("Unable to retrieve statistics", 500);

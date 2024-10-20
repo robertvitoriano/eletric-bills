@@ -1,15 +1,17 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Zap } from "lucide-react";
 
-export const EffectiveTotalCard = ({ totalConsumptionOfElectricEnergy }) => {
+export const TotalWithoutGDCard = ({ totalCostWithoutGDEnergy }) => {
   return (
     <Card className="rounded-lg bg-primary">
       <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-semibold text-white">Consumo total </CardTitle>
+        <CardTitle className="text-base font-semibold text-white">Custo total sem GD (R$)</CardTitle>
         <Zap className="text-white" />
       </CardHeader>
       <CardContent className="space-y-10 border-none">
-        <span className="text-2xl font-bold tracking-tight text-white">{totalConsumptionOfElectricEnergy} kWh</span>
+        <span className="text-2xl font-bold tracking-tight text-white">
+          {String(totalCostWithoutGDEnergy).replace(".", ",")}{" "}
+        </span>
       </CardContent>
     </Card>
   );

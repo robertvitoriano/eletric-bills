@@ -12,8 +12,13 @@ export async function getStatistics(
     name?: string;
     period?: Period;
   } = {}
-): Promise<{ totalConsumptionOfElectricEnergy }> {
-  const response = await api.get<{ totalConsumptionOfElectricEnergy }>("/invoices/statistics", {
+): Promise<{ consumptionOfElectricEnergy; compensatedEnergy; totalCostWithoutGDEnergy; gdEconomy }> {
+  const response = await api.get<{
+    consumptionOfElectricEnergy;
+    compensatedEnergy;
+    totalCostWithoutGDEnergy;
+    gdEconomy;
+  }>("/invoices/statistics", {
     params: queryParams,
   });
 

@@ -1,5 +1,5 @@
-import { TotalWithoutGDCard } from "./TotalWithoutGDCard";
-import { EffectiveTotalCard } from "./EffectiveTotalCard";
+import { TotalWithoutGDCard } from "./TotalCostWithoutGDCard";
+import { ConsumptionOfElectricEnergyCard } from "./ConsumptionOfElectricEnergyCard";
 import { TotalCompensationGDCard } from "./TotalCompensatedEnergyGDCard";
 import { CompensatedEnergy } from "./CompensatedEnergy";
 import { FinancialResults } from "./FinancialResults";
@@ -11,20 +11,26 @@ import { uploadNewInvoice } from "@/api/upload-new-invoice";
 import { Spinner } from "@/components/Spinner";
 import { toast } from "sonner";
 import { getStatistics } from "@/api/get-statistics";
+import { GDEconomyCard } from "./GDEconomyCard";
 export function Dashboard() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [filesSelected, setFilesSelected] = useState<File[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [totalConsumptionOfElectricEnergy, settotalConsumptionOfElectricEnergy] = useState<number>();
-
+  const [consumptionOfElectricEnergy, setConsumptionOfElectricEnergy] = useState<number>();
+  const [compensatedEnergy, setCompensatedEnergy] = useState<number>();
+  const [totalCostWithoutGDEnergy, setTotalCostWithoutGDEnergy] = useState<number>();
+  const [gdEconomy, setGDEconomy] = useState();
   useEffect(() => {
     loadStatistics();
   }, []);
 
   async function loadStatistics() {
     const statisticsResponse = await getStatistics();
-    settotalConsumptionOfElectricEnergy(statisticsResponse.totalConsumptionOfElectricEnergy);
+    setConsumptionOfElectricEnergy(statisticsResponse.consumptionOfElectricEnergy);
+    setCompensatedEnergy(statisticsResponse.compensatedEnergy);
+    setTotalCostWithoutGDEnergy(statisticsResponse.totalCostWithoutGDEnergy);
+    setGDEconomy(statisticsResponse.gdEconomy);
   }
   const openFileDialog = () => {
     if (fileInputRef.current) {
@@ -79,7 +85,7 @@ export function Dashboard() {
   return (
     <>
       <div className="flex flex-col gap-4 text-white p-4">
-        <div className="flex justify-between">
+        <div className="flex flex-col  flex:row gap-4 items-center md:justify-between">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <DrawerDialog
             title="Processar nova fatura"
@@ -132,10 +138,11 @@ export function Dashboard() {
           />
         </div>
 
-        <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
-          <EffectiveTotalCard totalConsumptionOfElectricEnergy={totalConsumptionOfElectricEnergy} />
-          <TotalWithoutGDCard />
-          <TotalCompensationGDCard />
+        <div className="flex flex-col md:grid md:grid-cols-4 gap-4">
+          <ConsumptionOfElectricEnergyCard consumptionOfElectricEnergy={consumptionOfElectricEnergy} />
+          <TotalWithoutGDCard totalCostWithoutGDEnergy={totalCostWithoutGDEnergy} />
+          <TotalCompensationGDCard compensatedEnergy={compensatedEnergy} />
+          <GDEconomyCard gdEconomy={gdEconomy} />
         </div>
         <div className="flex flex-col 2xl:flex-row gap-4">
           <CompensatedEnergy />
