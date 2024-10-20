@@ -16,6 +16,9 @@ class CustomersRepository implements ICustomersRepository {
     if (customerId) {
       queryBuilder.where("customer.id = :customerId", { customerId });
     }
+    if (customerId) {
+      queryBuilder.where("customer.id = :customerId", { customerId });
+    }
 
     if (year) {
       queryBuilder.andWhere("EXTRACT(YEAR FROM invoice.due_date) = :year", { year });
@@ -26,7 +29,7 @@ class CustomersRepository implements ICustomersRepository {
   }
 
   async list(data: { page?: number; perPage?: number; name?: string; year?: number; customerId?: string }) {
-    const { page = 1, year, customerId, perPage = 10 } = data;
+    const { page = 1, year, customerId, perPage = 10, name } = data;
     const offset = (page - 1) * perPage || 0;
 
     const queryBuilder = this.customerRepository
@@ -42,7 +45,9 @@ class CustomersRepository implements ICustomersRepository {
     if (year) {
       queryBuilder.andWhere("EXTRACT(YEAR FROM invoice.due_date) = :year", { year });
     }
-
+    if (name) {
+      queryBuilder.where("customer.name = :name", { name });
+    }
     queryBuilder.skip(offset).take(perPage);
 
     const customers = await queryBuilder.getMany();

@@ -66,6 +66,7 @@ export function Invoices() {
   async function handleFilterChange() {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
     updateUrlQueryParams();
+    await loadData();
   }
 
   const handlePageChange = (newPage: number) => {
