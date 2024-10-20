@@ -177,7 +177,7 @@ export function Invoices() {
                                         </p>
                                       )}
                                       <p>
-                                        <strong>Valor Total:</strong> R$ {item.total_value}
+                                        <strong>Valor Total:</strong> R$ {String(item.total_value).replace(".", ",")}
                                       </p>
                                     </div>
                                   ))}
