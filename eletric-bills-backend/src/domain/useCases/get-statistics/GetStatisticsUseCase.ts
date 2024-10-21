@@ -5,6 +5,7 @@ import { InvoiceItemTypes } from "../../../shared/enums/invoice-item-types";
 import { ICustomersRepository } from "../../repositories/ICustomersRepository";
 import { InvoiceItem, InvoiceItemType, Invoice, ICustomer } from "./../types";
 import { capitalize } from "../../../utils/parsing";
+import { cp } from "fs";
 interface IExecuteParams {
   customerNumber?: string | null;
   period?: string | null;
@@ -66,15 +67,18 @@ export class GetStatisticsUseCase {
       const economyWithGDValuesPerMonthArray = invoicesAndItemsByCustomer.map((customer) => {
         return customer.invoices
           .map((invoice) => {
-            const effectiveCost = invoice.invoice_items.find(
+            const effectiveCostItem = invoice.invoice_items.find(
               (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.TOTAL.id
-            ).total_value;
-            const economyWithGD =
-              invoice.invoice_items.find(
-                (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.COMPENSATED_ENERGY.id
-              ).total_value * -1;
-            const totalWithoutGD = Number(effectiveCost) + Number(economyWithGD);
-            return { month: capitalize(invoice.reference.split("/")[0]), totalWithoutGD, economyWithGD };
+            );
+            const economyWithGDItem = invoice.invoice_items.find(
+              (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.COMPENSATED_ENERGY.id
+            );
+            if (effectiveCostItem && economyWithGDItem) {
+              const economyWithGD = Number(economyWithGDItem.total_value * -1);
+              const totalWithoutGD = Number(effectiveCostItem.total_value) + economyWithGD;
+              return { month: capitalize(invoice.reference.split("/")[0]), totalWithoutGD, economyWithGD };
+            }
+            return { month: capitalize(invoice.reference.split("/")[0]), consumedEnergy: 0, compensatedEnergy: 0 };
           })
           .reverse();
       });
@@ -82,27 +86,25 @@ export class GetStatisticsUseCase {
       const consumedEnergyAndCompensatedEnergyArray = invoicesAndItemsByCustomer.map((customer) => {
         return customer.invoices
           .map((invoice) => {
-            const consumedEletricEnergy = Number(
-              invoice.invoice_items.find(
-                (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.ELECTRICITY.id
-              ).quantity
+            const consumedEletricEnergyItem = invoice.invoice_items.find(
+              (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.ELECTRICITY.id
             );
 
-            const consumedSceeEnergy = Number(
-              invoice.invoice_items.find(
-                (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.SCEE_ENERGY.id
-              ).quantity
+            const consumedSceeEnergyItem = invoice.invoice_items.find(
+              (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.SCEE_ENERGY.id
             );
 
-            const consumedEnergy = consumedEletricEnergy + consumedSceeEnergy;
-
-            const compensatedEnergy = Number(
-              invoice.invoice_items.find(
-                (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.COMPENSATED_ENERGY.id
-              ).quantity
+            const compensatedEnergyItem = invoice.invoice_items.find(
+              (invoiceItem) => invoiceItem.invoice_item_type_id === InvoiceItemTypes.COMPENSATED_ENERGY.id
             );
 
-            return { month: capitalize(invoice.reference.split("/")[0]), consumedEnergy, compensatedEnergy };
+            if (consumedEletricEnergyItem && consumedSceeEnergyItem && compensatedEnergyItem) {
+              const consumedEnergy =
+                Number(consumedEletricEnergyItem.quantity) + Number(consumedSceeEnergyItem.quantity);
+              const compensatedEnergy = Number(compensatedEnergyItem.quantity);
+              return { month: capitalize(invoice.reference.split("/")[0]), consumedEnergy, compensatedEnergy };
+            }
+            return { month: capitalize(invoice.reference.split("/")[0]), consumedEnergy: 0, compensatedEnergy: 0 };
           })
           .reverse();
       });
