@@ -123,3 +123,12 @@ Para executar o frontend, siga os passos abaixo:
 A aplicação iniciará por padrão em `http://localhost:5173/`. No entanto, caso inicie em outra **PORTA**, isso será informado no terminal durante a execução.
 
 ---
+#### 4. Testes
+
+Para executar os test no Backend execute o comando na raiz da pasta  `eletric-bills-backend`
+
+1. Execute o comando:
+
+   ```bash
+   pnpm run test
+   ```
