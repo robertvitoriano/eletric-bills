@@ -10,7 +10,10 @@
       "experimentalDecorators": true,
       "resolveJsonModule": true,
       "sourceMap": true,
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      "paths": {
+        "@/*": ["src/*"]
+      }
     }
   },
   "compilerOptions": {
@@ -23,6 +26,9 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "sourceMap": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }
