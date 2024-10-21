@@ -19,5 +19,6 @@ describe("EletricityInvoiceParser", () => {
 
     expect(extractedData.invoiceParameters.publicIluminationCost).toBe(40.45);
     expect(extractedData.invoiceParameters.totalCost).toBe(186.11);
+    expect(extractedData.customerInfo.customerName).toBe("SELFWAY TREINAMENTO PERSONALIZADO LTDA");
   });
 });
