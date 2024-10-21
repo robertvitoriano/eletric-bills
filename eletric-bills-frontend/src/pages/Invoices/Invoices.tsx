@@ -183,11 +183,11 @@ export function Invoices() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map(({ installationNumber, customerNumber, name, invoices }) => (
-              <TableRow key={installationNumber}>
+            {customers.map(({ installation_number, customer_number, name, invoices }) => (
+              <TableRow key={installation_number}>
                 <TableCell className="font-medium whitespace-nowrap text-center">{name}</TableCell>
-                <TableCell className="text-center">{installationNumber}</TableCell>
-                <TableCell className="text-center">{customerNumber}</TableCell>
+                <TableCell className="text-center">{installation_number}</TableCell>
+                <TableCell className="text-center">{customer_number}</TableCell>
 
                 {months.map((month) => {
                   const invoice = invoices.find(({ reference }: Invoice) => month.code === reference.split("/")[0]);
