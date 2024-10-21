@@ -77,15 +77,17 @@ export function Dashboard() {
     if (filesSelected.length > 0) {
       try {
         await uploadNewInvoice(filesSelected);
-        await loadStatistics();
         setLoading(false);
         setFilesSelected([]);
         toast("As faturas foram processadas");
+        await loadStatistics();
       } catch (e) {
         toast("Erro ao processar as faturas");
         setLoading(false);
         setFilesSelected([]);
         console.error(e);
+      } finally {
+        await loadStatistics();
       }
     }
   }
