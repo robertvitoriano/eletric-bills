@@ -4,7 +4,7 @@
 **Desenvolvedor:** Robert da Silva Vitoriano
 
 ---
-Aplicação Hospedada na AWS: https://eletric-invoices.robertvitoriano.com/
+Aplicação Hospedada na AWS: [eletric-invoices.robertvitoriano.com](https://eletric-invoices.robertvitoriano.com/)
 
 ## Pré-requisitos para a Execução deste Projeto
 
@@ -85,8 +85,18 @@ Para executar o backend na raiz da pasta `eletric-bills-backend`, siga os passos
    ```
 
    O Node.js pode ser baixado no site: [Node.js](https://nodejs.org/en) (será necessário para a execução do Frontend).
-   
-  2. Execute `pnpm install` na raiz do projeto e, em seguida, execute:
+
+  2. Para executar sem Docker, você precisará de um banco de dados PostgreSQL em funcionamento. Altere as variáveis de ambiente para refletir suas credenciais do PostgreSQL:
+
+```plaintext
+DB_USER= -- seu usuário do PostgreSQL
+DB_HOST= -- endereço do servidor PostgreSQL (por exemplo, localhost)
+DB_PASSWORD= -- sua senha do PostgreSQL
+DB_PORT=5432
+DB_NAME= -- nome do banco de dados que deseja usar
+```
+
+  3. Execute `pnpm install` na raiz do projeto e, em seguida, execute:
 
    ```bash
    pnpm run dev
