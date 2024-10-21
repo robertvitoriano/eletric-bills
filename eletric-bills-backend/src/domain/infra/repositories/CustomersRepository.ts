@@ -31,12 +31,15 @@ class CustomersRepository implements ICustomersRepository {
   }
   async list(data?: {
     page?: number;
-    year: number;
-    customerId: string;
-    perPage: number;
-    name: string;
+    year?: number;
+    customerId?: string;
+    perPage?: number;
+    name?: string;
+    customerNumber?: string;
+    startDate?: string;
+    endDate?: string;
   }): Promise<ICustomer[]> {
-    const { page = 1, year, customerId, perPage = 10, name } = data;
+    const { page = 1, year, customerId, perPage = 10, name, customerNumber, startDate, endDate } = data;
     const offset = (page - 1) * perPage || 0;
 
     const queryBuilder = this.customerRepository
@@ -49,12 +52,22 @@ class CustomersRepository implements ICustomersRepository {
       queryBuilder.where("customer.id = :customerId", { customerId });
     }
 
+    if (customerNumber) {
+      queryBuilder.andWhere("customer.customer_number = :customerNumber", { customerNumber });
+    }
+
     if (year) {
       queryBuilder.andWhere("EXTRACT(YEAR FROM invoice.due_date) = :year", { year });
     }
+
     if (name) {
-      queryBuilder.where("customer.name = :name", { name });
+      queryBuilder.andWhere("customer.name = :name", { name });
     }
+
+    if (startDate && endDate) {
+      queryBuilder.andWhere("invoice.due_date BETWEEN :startDate AND :endDate", { startDate, endDate });
+    }
+
     if (offset && perPage) queryBuilder.skip(offset).take(perPage);
 
     const customers = await queryBuilder.getMany();
@@ -65,6 +78,7 @@ class CustomersRepository implements ICustomersRepository {
       customerNumber: customer["customer_number"],
     }));
   }
+
   async store(customerData: Omit<Customer, "id" | "consumptions" | "invoices">): Promise<Customer> {
     const customer = this.customerRepository.create(customerData);
     return await this.customerRepository.save(customer);
