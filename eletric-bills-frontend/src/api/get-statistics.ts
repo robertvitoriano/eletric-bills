@@ -10,7 +10,8 @@ export async function getStatistics(
     customer_number?: string;
     installation_number?: string;
     name?: string;
-    period?: Period;
+    start_date?: string;
+    end_date?: string;
   } = {}
 ): Promise<{
   consumptionOfElectricEnergy;

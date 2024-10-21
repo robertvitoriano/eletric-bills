@@ -2,17 +2,14 @@ import { Request, Response } from "express";
 import { HttpStatusCode } from "axios";
 import { container } from "tsyringe";
 import { GetStatisticsUseCase } from "../../useCases/get-statistics/GetStatisticsUseCase";
-import { Period } from "../../useCases/types";
 
 class GetStatisticsController {
   async handle(request: Request, response: Response): Promise<Response> {
-    const { customer_number, installation_number, name, period } = request.query;
+    const { customer_number, installation_number, name, start_date, end_date } = request.query;
 
     try {
       const getStatisticsUseCase = container.resolve(GetStatisticsUseCase);
-      const periodData: Period | undefined = period
-        ? { start: new Date(period.start as string), end: new Date(period.end as string) }
-        : undefined;
+
       const {
         consumptionOfElectricEnergy,
         compensatedEnergy,
@@ -20,7 +17,11 @@ class GetStatisticsController {
         gdEconomy,
         economyWithGDValuesPerMonth,
         consumedEnergyAndCompensatedEnergy,
-      } = await getStatisticsUseCase.execute({});
+      } = await getStatisticsUseCase.execute({
+        startDate: String(start_date),
+        endDate: String(end_date),
+        customerNumber: String(customer_number),
+      });
 
       return response.status(HttpStatusCode.Ok).send({
         consumptionOfElectricEnergy,

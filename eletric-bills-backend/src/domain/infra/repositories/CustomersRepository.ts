@@ -40,7 +40,7 @@ class CustomersRepository implements ICustomersRepository {
     endDate?: string;
   }): Promise<ICustomer[]> {
     const { page = 1, year, customerId, perPage = 10, name, customerNumber, startDate, endDate } = data;
-    const offset = (page - 1) * perPage || 0;
+    const offset = (page - 1) * perPage;
 
     const queryBuilder = this.customerRepository
       .createQueryBuilder("customer")
@@ -68,14 +68,14 @@ class CustomersRepository implements ICustomersRepository {
       queryBuilder.andWhere("invoice.due_date BETWEEN :startDate AND :endDate", { startDate, endDate });
     }
 
-    if (offset && perPage) queryBuilder.skip(offset).take(perPage);
+    queryBuilder.skip(offset).take(perPage);
 
     const customers = await queryBuilder.getMany();
 
     return customers.map((customer) => ({
       ...customer,
-      installationNumber: customer["installation_number"],
-      customerNumber: customer["customer_number"],
+      installationNumber: customer.installationNumber,
+      customerNumber: customer.customerNumber,
     }));
   }
 

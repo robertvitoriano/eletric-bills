@@ -8,7 +8,8 @@ import { capitalize } from "../../../utils/parsing";
 import { cp } from "fs";
 interface IExecuteParams {
   customerNumber?: string | null;
-  period?: string | null;
+  startDate: string;
+  endDate: string;
   name?: string;
 }
 
@@ -32,8 +33,8 @@ export class GetStatisticsUseCase {
 
   public async execute({
     customerNumber = null,
-    period = null,
-    name = "",
+    startDate = "",
+    endDate = "",
   }: IExecuteParams): Promise<IStatisticsResult> {
     try {
       const consumptionOfElectricity = await this.invoicesRepository.getSumOfInvoiceItemsByType(
@@ -62,7 +63,11 @@ export class GetStatisticsUseCase {
         customerNumber ? customerNumber : undefined
       );
 
-      const invoicesAndItemsByCustomer: ICustomer[] = await this.customersRepository.list({});
+      const invoicesAndItemsByCustomer: ICustomer[] = await this.customersRepository.list({
+        customerNumber,
+        startDate,
+        endDate,
+      });
 
       const economyWithGDValuesPerMonthArray = invoicesAndItemsByCustomer.map((customer) => {
         return customer.invoices

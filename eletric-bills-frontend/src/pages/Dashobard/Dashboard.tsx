@@ -12,6 +12,11 @@ import { toast } from "sonner";
 import { getStatistics } from "@/api/get-statistics";
 import { GDEconomyCard } from "./GDEconomyCard";
 export function Dashboard() {
+  const [customerNumber, setCustomerNumber] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [showAllData, setShowAllData] = useState<boolean>(false);
+
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [filesSelected, setFilesSelected] = useState<File[]>([]);
@@ -27,11 +32,17 @@ export function Dashboard() {
     useState<Array<{ month: string; consumedEnergy: number; compensatedEnergy: number }>>();
 
   useEffect(() => {
-    loadStatistics();
-  }, []);
+    if (showAllData || customerNumber || (startDate && endDate)) {
+      loadStatistics();
+    }
+  }, [showAllData, customerNumber, startDate, endDate]);
 
   async function loadStatistics() {
-    const statisticsResponse = await getStatistics();
+    const statisticsResponse = await getStatistics({
+      customer_number: customerNumber,
+      start_date: startDate,
+      end_date: endDate,
+    });
     setConsumptionOfElectricEnergy(statisticsResponse.consumptionOfElectricEnergy);
     setCompensatedEnergy(statisticsResponse.compensatedEnergy);
     setTotalCostWithoutGDEnergy(statisticsResponse.totalCostWithoutGDEnergy);
@@ -39,6 +50,10 @@ export function Dashboard() {
     setEconomyWithGDValuesPerMonth(statisticsResponse.economyWithGDValuesPerMonth);
     setConsumedEnergyAndCompensatedEnergy(statisticsResponse.consumedEnergyAndCompensatedEnergy);
   }
+
+  const handleShowAllData = () => {
+    setShowAllData(true);
+  };
   const openFileDialog = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -80,7 +95,6 @@ export function Dashboard() {
         setLoading(false);
         setFilesSelected([]);
         toast("As faturas foram processadas");
-        await loadStatistics();
       } catch (e) {
         toast("Erro ao processar as faturas");
         setLoading(false);
@@ -148,17 +162,46 @@ export function Dashboard() {
             }
           />
         </div>
-
-        <div className="flex flex-col md:grid md:grid-cols-4 gap-4">
-          <ConsumptionOfElectricEnergyCard consumptionOfElectricEnergy={consumptionOfElectricEnergy} />
-          <TotalWithoutGDCard totalCostWithoutGDEnergy={totalCostWithoutGDEnergy} />
-          <TotalCompensationGDCard compensatedEnergy={compensatedEnergy} />
-          <GDEconomyCard gdEconomy={gdEconomy} />
+        <div className="flex gap-4 mb-4">
+          <input
+            type="text"
+            placeholder="Nº do Cliente"
+            value={customerNumber}
+            onChange={(e) => setCustomerNumber(e.target.value)}
+            className="p-2 rounded-md text-black"
+          />
+          <input
+            type="date"
+            placeholder="Data de Início"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="p-2 rounded-md text-black"
+          />
+          <input
+            type="date"
+            placeholder="Data de Término"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="p-2 rounded-md text-black"
+          />
+          <button className="bg-blue-500 p-2 rounded-md text-white" onClick={handleShowAllData}>
+            Dados de Todos os Clientes
+          </button>
         </div>
-        <div className="flex flex-col 2xl:flex-row gap-4">
-          <CompensatedEnergy consumedEnergyAndCompensatedEnergy={consumedEnergyAndCompensatedEnergy} />
-          <FinancialResults economyWithGDValuesPerMonth={economyWithGDValuesPerMonth} />
-        </div>
+        {(customerNumber || (startDate && endDate) || showAllData) && (
+          <>
+            <div className="flex flex-col md:grid md:grid-cols-4 gap-4">
+              <ConsumptionOfElectricEnergyCard consumptionOfElectricEnergy={consumptionOfElectricEnergy} />
+              <TotalWithoutGDCard totalCostWithoutGDEnergy={totalCostWithoutGDEnergy} />
+              <TotalCompensationGDCard compensatedEnergy={compensatedEnergy} />
+              <GDEconomyCard gdEconomy={gdEconomy} />
+            </div>
+            <div className="flex flex-col 2xl:flex-row gap-4">
+              <CompensatedEnergy consumedEnergyAndCompensatedEnergy={consumedEnergyAndCompensatedEnergy} />
+              <FinancialResults economyWithGDValuesPerMonth={economyWithGDValuesPerMonth} />
+            </div>
+          </>
+        )}
       </div>
     </>
   );
