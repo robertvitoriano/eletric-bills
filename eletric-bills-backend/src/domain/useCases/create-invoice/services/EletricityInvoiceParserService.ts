@@ -276,7 +276,7 @@ export class EletricityInvoiceParser {
       section.includes("Bifásico")
     );
 
-    if (threePhaseReferenceDateNearChunkIndex > 1) {
+    if (threePhaseReferenceDateNearChunkIndex > -1) {
       const readingsChunk = this.sectionsTrimmed[threePhaseReferenceDateNearChunkIndex].replace("atividades", "");
 
       const readingsMidIndex = Math.floor(readingsChunk.length / 2);
@@ -291,7 +291,7 @@ export class EletricityInvoiceParser {
 
       return { previousReading, currentReading, readingDays, nextReading };
     }
-    if (biPhasicReferenceDateNearChunkIndex) {
+    if (biPhasicReferenceDateNearChunkIndex > -1) {
       const readingsChunk = this.sectionsTrimmed[biPhasicReferenceDateNearChunkIndex].replace(
         "diasPróxima\nBifásico",
         ""
