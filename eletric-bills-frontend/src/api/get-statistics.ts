@@ -1,10 +1,5 @@
 import { api } from "./api";
 
-interface Period {
-  start: Date;
-  end: Date;
-}
-
 export async function getStatistics(
   queryParams: {
     customer_number?: string;
