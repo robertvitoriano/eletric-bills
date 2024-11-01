@@ -15,7 +15,6 @@ export function Dashboard() {
   const [customerNumber, setCustomerNumber] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  const [showAllData, setShowAllData] = useState<boolean>(false);
 
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -32,10 +31,8 @@ export function Dashboard() {
     useState<Array<{ month: string; consumedEnergy: number; compensatedEnergy: number }>>();
 
   useEffect(() => {
-    if (showAllData || customerNumber || (startDate && endDate)) {
-      loadStatistics();
-    }
-  }, [showAllData, customerNumber, startDate, endDate]);
+    loadStatistics();
+  }, [customerNumber, startDate, endDate]);
 
   async function loadStatistics() {
     const statisticsResponse = await getStatistics({
@@ -51,9 +48,6 @@ export function Dashboard() {
     setConsumedEnergyAndCompensatedEnergy(statisticsResponse.consumedEnergyAndCompensatedEnergy);
   }
 
-  const handleShowAllData = () => {
-    setShowAllData(true);
-  };
   const openFileDialog = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -184,24 +178,22 @@ export function Dashboard() {
             onChange={(e) => setEndDate(e.target.value)}
             className="p-2 rounded-md text-black"
           />
-          <button className="bg-blue-500 p-2 rounded-md text-white" onClick={handleShowAllData}>
-            Dados de Todos os Clientes
-          </button>
+          {!customerNumber && !(startDate && endDate) && (
+            <div className="bg-blue-500 p-2 rounded-md text-white">Mostrando Dados de Todos os Clientes</div>
+          )}
         </div>
-        {(customerNumber || (startDate && endDate) || showAllData) && (
-          <>
-            <div className="flex flex-col md:grid md:grid-cols-4 gap-4">
-              <ConsumptionOfElectricEnergyCard consumptionOfElectricEnergy={consumptionOfElectricEnergy} />
-              <TotalWithoutGDCard totalCostWithoutGDEnergy={totalCostWithoutGDEnergy} />
-              <TotalCompensationGDCard compensatedEnergy={compensatedEnergy} />
-              <GDEconomyCard gdEconomy={gdEconomy} />
-            </div>
-            <div className="flex flex-col 2xl:flex-row gap-4">
-              <CompensatedEnergy consumedEnergyAndCompensatedEnergy={consumedEnergyAndCompensatedEnergy} />
-              <FinancialResults economyWithGDValuesPerMonth={economyWithGDValuesPerMonth} />
-            </div>
-          </>
-        )}
+        <>
+          <div className="flex flex-col md:grid md:grid-cols-4 gap-4">
+            <ConsumptionOfElectricEnergyCard consumptionOfElectricEnergy={consumptionOfElectricEnergy} />
+            <TotalWithoutGDCard totalCostWithoutGDEnergy={totalCostWithoutGDEnergy} />
+            <TotalCompensationGDCard compensatedEnergy={compensatedEnergy} />
+            <GDEconomyCard gdEconomy={gdEconomy} />
+          </div>
+          <div className="flex flex-col 2xl:flex-row gap-4">
+            <CompensatedEnergy consumedEnergyAndCompensatedEnergy={consumedEnergyAndCompensatedEnergy} />
+            <FinancialResults economyWithGDValuesPerMonth={economyWithGDValuesPerMonth} />
+          </div>
+        </>
       </div>
     </>
   );

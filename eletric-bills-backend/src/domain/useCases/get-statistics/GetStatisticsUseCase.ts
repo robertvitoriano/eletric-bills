@@ -125,14 +125,15 @@ export class GetStatisticsUseCase {
       const consumedEnergyAndCompensatedEnergy = this.mergeConsumedAndCompensatedEnergyArrays(
         consumedEnergyAndCompensatedEnergyArray
       );
-      const totalCostWithoutGDEnergy = effectiveTotalCost + gdEconomy;
+      const gdEconomyModule = gdEconomy < 0 ? gdEconomy * -1 : gdEconomy;
+      const totalCostWithoutGDEnergy = effectiveTotalCost + gdEconomyModule;
       const consumptionOfElectricEnergy = consumptionOfElectricity + consumptionOfSCEEEnergy;
 
       return {
         consumptionOfElectricEnergy,
         compensatedEnergy,
         totalCostWithoutGDEnergy,
-        gdEconomy,
+        gdEconomy: gdEconomyModule,
         economyWithGDValuesPerMonth,
         consumedEnergyAndCompensatedEnergy,
       };
