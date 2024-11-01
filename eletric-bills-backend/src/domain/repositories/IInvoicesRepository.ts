@@ -5,7 +5,9 @@ interface IInvoicesRepository {
   getSumOfInvoiceItemsByType(
     invoiceItemTypeId: number,
     field: "total_value" | "quantity",
-    customerId?: string
+    customerId?: string,
+    startDate?: string,
+    endDate?: string
   ): Promise<number>;
   store(invoiceData: Omit<Invoice, "id" | "invoice_items" | "customer">): Promise<Invoice>;
   findOne(id: Partial<Invoice>): Promise<Invoice | null>;

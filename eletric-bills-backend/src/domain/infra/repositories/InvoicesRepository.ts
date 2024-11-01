@@ -14,18 +14,29 @@ class InvoicesRepository implements IInvoicesRepository {
   async getSumOfInvoiceItemsByType(
     invoiceItemTypeId: number,
     field: "total_value" | "quantity",
-    customerId?: string
+    customerNumber?: string,
+    customerId?: string,
+    startDate?: string,
+    endDate?: string
   ): Promise<number> {
     const queryBuilder = this.invoiceItemRepository
       .createQueryBuilder("invoiceItem")
       .select(`SUM(invoiceItem.${field})`, "total")
       .where("invoiceItem.invoice_item_type_id = :invoiceItemTypeId", { invoiceItemTypeId });
 
-    if (customerId) {
+    if (customerNumber) {
       queryBuilder
-        .innerJoinAndSelect("invoiceItem.invoice", "invoice")
-        .where("invoice.customer_id = :customerId", { customerId });
+        .innerJoin("invoiceItem.invoice", "invoice")
+        .innerJoin("invoice.customer", "customer")
+        .where("customer.customer_number = :customerNumber", { customerNumber })
+        .addGroupBy("customer.id");
     }
+
+    if (startDate && endDate) {
+      queryBuilder.andWhere("invoice.due_date BETWEEN :startDate AND :endDate", { startDate, endDate });
+    }
+
+    queryBuilder.addGroupBy("invoiceItem.invoice_item_type_id");
 
     const result = await queryBuilder.getRawOne();
     return parseFloat(result?.total || "0");

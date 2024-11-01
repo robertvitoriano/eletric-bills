@@ -45,22 +45,30 @@ export class GetStatisticsUseCase {
       const consumptionOfSCEEEnergy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.SCEE_ENERGY.id,
         "quantity",
-        customerNumber ? customerNumber : undefined
+        customerNumber,
+        startDate,
+        endDate
       );
       const compensatedEnergy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.COMPENSATED_ENERGY.id,
         "quantity",
-        customerNumber ? customerNumber : undefined
+        customerNumber,
+        startDate,
+        endDate
       );
       const effectiveTotalCost = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.TOTAL.id,
         "total_value",
-        customerNumber ? customerNumber : undefined
+        customerNumber,
+        startDate,
+        endDate
       );
       const gdEconomy = await this.invoicesRepository.getSumOfInvoiceItemsByType(
         InvoiceItemTypes.COMPENSATED_ENERGY.id,
         "total_value",
-        customerNumber ? customerNumber : undefined
+        customerNumber,
+        startDate,
+        endDate
       );
 
       const invoicesAndItemsByCustomer: ICustomer[] = await this.customersRepository.list({
@@ -117,15 +125,14 @@ export class GetStatisticsUseCase {
       const consumedEnergyAndCompensatedEnergy = this.mergeConsumedAndCompensatedEnergyArrays(
         consumedEnergyAndCompensatedEnergyArray
       );
-      const gdEconomyModule = gdEconomy * -1;
-      const totalCostWithoutGDEnergy = effectiveTotalCost + gdEconomyModule;
+      const totalCostWithoutGDEnergy = effectiveTotalCost + gdEconomy;
       const consumptionOfElectricEnergy = consumptionOfElectricity + consumptionOfSCEEEnergy;
 
       return {
         consumptionOfElectricEnergy,
         compensatedEnergy,
         totalCostWithoutGDEnergy,
-        gdEconomy: gdEconomyModule,
+        gdEconomy,
         economyWithGDValuesPerMonth,
         consumedEnergyAndCompensatedEnergy,
       };
