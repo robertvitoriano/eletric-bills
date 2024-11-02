@@ -3,7 +3,7 @@ import { Zap } from "lucide-react";
 
 export const ConsumptionOfElectricEnergyCard = ({ consumptionOfElectricEnergy }) => {
   return (
-    <Card className="rounded-lg bg-primary">
+    <Card className="rounded-lg bg-primary flex-1">
       <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-semibold text-white">Consumo de Energia Elétrica (KWh): </CardTitle>
         <Zap className="text-white" />
