@@ -178,7 +178,7 @@ export function Dashboard() {
             onChange={(e) => setEndDate(e.target.value)}
             className="p-2 rounded-md text-black"
           />
-          {!customerNumber && !(startDate && endDate) && (
+          {!customerNumber && (
             <div className="bg-blue-500 p-2 rounded-md text-white">Mostrando Dados de Todos os Clientes</div>
           )}
         </div>

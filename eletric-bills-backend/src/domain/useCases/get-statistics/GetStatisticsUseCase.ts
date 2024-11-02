@@ -3,9 +3,8 @@ import { IInvoicesRepository } from "../../repositories/IInvoicesRepository";
 import { AppError } from "../../../shared/errors/AppError";
 import { InvoiceItemTypes } from "../../../shared/enums/invoice-item-types";
 import { ICustomersRepository } from "../../repositories/ICustomersRepository";
-import { InvoiceItem, InvoiceItemType, Invoice, ICustomer } from "./../types";
+import { ICustomer } from "./../types";
 import { capitalize } from "../../../utils/parsing";
-import { cp } from "fs";
 interface IExecuteParams {
   customerNumber?: string | null;
   startDate: string;
